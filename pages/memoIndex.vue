@@ -1,99 +1,77 @@
 <template>
-  <div>
-    <v-app>
-      <v-content>
-        <v-container class="grey lighten-5 pr-0">
-          <v-responsive>
-            <v-row>
-              <v-navigation-drawer>
-                <v-card height="400" width="256">
-                  <v-list-item>
-                     </v-list-item>
-                </v-card>
-              </v-navigation-drawer>
-              <div>
-                <v-col cols>
-                  <div v-for="(memo, index) in memos" v-bind:key="index">
-                    <v-card height="144" width="144">
-                      <v-card-text>
-                        <div class="text-caption mt-n3 ml-n3 p-0">
-                          {{ memo.title }}
-                        </div>
-                        <div class="text-caption mt-n1 ml-n2 mb-n2">
-                          兄貴とアノニマスとアニサキスとアナウンスふぁさfsっっfsふぇあっふぇげrgrgsっgらあっgvgrg
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </div>
-                </v-col>
-              </div>
+  <v-app>
+    <v-container>
+    <v-navigation-drawer app permanent>
+      <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title> ワード検索 </v-list-item-title>
+            <v-form>
+              <v-text-field placeholder="検索ワードを入力" dense></v-text-field>
+            </v-form>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title> ユーザー検索 </v-list-item-title>
+            <v-form>
+              <v-text-field
+                placeholder="ユーザーの名前を入力"
+                dense
+              ></v-text-field>
+            </v-form>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+        
 
-              <v-col cols="">
-                <v-card>
-                  <div>
-                    <v-textarea auto-grow dense height="100%"></v-textarea>
-                  </div>
-                  <v-divider class="my-2"></v-divider>
+       
+      
 
-                  <v-row>
-                    <div class>
-                      <v-col class="mr-n4 text-no-wrap text-caption">
-                        タグ
-                      </v-col>
-                    </div>
+    <v-navigation-drawer right app permanent>
+      <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title> タグ検索 </v-list-item-title>
+            <v-form>
+              <v-text-field placeholder="タグ入力" dense></v-text-field>
+            </v-form>
+            <v-list-item-title> F </v-list-item-title>
+            <v-list-item-subtitle>firebase</v-list-item-subtitle>
+            <v-list-item-title> N </v-list-item-title>
+            <v-list-item-subtitle>nuxt</v-list-item-subtitle>
 
-                    <div height="3px">
-                      <v-col class="mt-n6 pt-n6 text-caption">
-                        <v-card-actions>
-                          <v-text-field
-                            text-caption
-                            placeholder="タグを入力"
-                          ></v-text-field>
-                        </v-card-actions>
-                      </v-col>
-                    </div>
-                  </v-row>
-                  <v-container>
-                    <v-row no-gutters align-content="">
-                      <v-col
-                        v-for="(memo, index) in memos"
-                        v-bind:key="index"
-                        style="position: sticky; left: 0"
-                      >
-                        <v-chip close filter ripple tag small></v-chip>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card>
-                <!-- <div style="overflow-x: auto;"> -->
-                <div style="overflow-x: auto">
-                  <v-virtul-scroll
-                    max-height="20"
-                    item-height="20"
-                    items="memos"
-                  >
-                    <v-card>
-                      <v-list>
-                        <v-list
-                          v-for="(memo, index) in memos"
-                          v-bind:key="index"
-                          style="position: sticky; left: 0"
-                        >
-                          {{ memo.title }}
-                        </v-list>
-                      </v-list>
+          </v-list-item-content>
+        </v-list-item>
+        
+      </v-list>
+    </v-navigation-drawer>
+        
+  
 
-                      <!-- <v-chip close filter ripple tag small> 取引先あああ</v-chip> -->
-                    </v-card>
-                  </v-virtul-scroll>
-                </div>
-              </v-col>
-            </v-row>
-          </v-responsive>
-        </v-container>
-      </v-content>
-    </v-app>
-  </div>
+  
+
+
+    <v-card v-for="(memo, index) in memos" v-bind:key="index">
+      <v-card-title>
+        {{ memo.title }}
+      </v-card-title>
+      <v-card-text>
+        {{ memo.content }}
+      </v-card-text>
+<v-card-actions>
+  <v-btn outlined>編集</v-btn>
+  <v-btn outlined>削除</v-btn>
+  <v-chip v-for="(memo, index) in memos" v-bind:key="index">{{memo.title}}</v-chip>
+</v-card-actions>
+    </v-card>
+   
+    
+    
+      
+    </v-container>
+  </v-app>
 </template>
 
 <script>
