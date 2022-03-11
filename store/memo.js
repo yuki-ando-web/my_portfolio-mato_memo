@@ -1,5 +1,16 @@
 export const state = () => ({
-  // memos:[
-  //   aaaaa,bbb,ccccc
+  // memos: [
+  //   { title: 'aaaaa', content: 'bbbbbb' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
+  //   { title: 'cccc', content: 'sddddd' },
   // ],
-})
+}
+)

@@ -54,6 +54,7 @@
 
 
     <v-card v-for="(memo, index) in memos" v-bind:key="index">
+      <v-card-text>ユーザー名</v-card-text>
       <v-card-title>
         {{ memo.title }}
       </v-card-title>
@@ -61,9 +62,10 @@
         {{ memo.content }}
       </v-card-text>
 <v-card-actions>
-  <v-btn outlined>編集</v-btn>
+  <v-chip>タグ</v-chip>
+  <v-spacer></v-spacer>
+  <v-btn outlined>詳細</v-btn>
   <v-btn outlined>削除</v-btn>
-  <v-chip v-for="(memo, index) in memos" v-bind:key="index">{{memo.title}}</v-chip>
 </v-card-actions>
     </v-card>
    
@@ -94,7 +96,7 @@ export default {
     }
   },
   created() {
-    console.log(this.memos)
+    console.log("E")
   },
 }
 </script>
