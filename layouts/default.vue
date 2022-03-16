@@ -1,28 +1,23 @@
 <template>
   <v-app dark>
-    
     <v-app-bar :clipped-left="clipped" fixed app>
       <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant"> -->
-        <!-- <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon> -->
+      <!-- <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon> -->
       <!-- <v-btn icon @click.stop="clipped = !clipped"> -->
-        <!-- <v-icon>mdi-application</v-icon> -->
+      <!-- <v-icon>mdi-application</v-icon> -->
       <!-- </v-btn> -->
       <!-- <v-btn icon @click.stop="fixed = !fixed"> -->
-        <!-- <v-icon>mdi-minus</v-icon> -->
+      <!-- <v-icon>mdi-minus</v-icon> -->
       <!-- </v-btn> -->
       <v-toolbar-title v-text="title" />
       <!-- <v-spacer /> -->
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer"> -->
-        <!-- <v-icon>mdi-menu</v-icon> -->
+      <!-- <v-icon>mdi-menu</v-icon> -->
       <!-- </v-btn> -->
       <v-spacer></v-spacer>
-      <v-btn depressed>
-        新規登録
-      </v-btn>
-      <v-btn depressed>
-        ログイン
-      </v-btn >
+      <v-btn depressed> 新規登録 </v-btn>
+      <v-btn depressed v-on:click="login"> ログイン </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -46,6 +41,8 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+
 export default {
   name: 'DefaultLayout',
   data() {
@@ -70,6 +67,13 @@ export default {
       rightDrawer: false,
       title: 'memo_app',
     }
+  },
+  methods: {
+    async login() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      await firebase.auth().signInWithPopup(provider)
+      this.$router.push('/')
+    },
   },
 }
 </script>
