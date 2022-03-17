@@ -72,7 +72,7 @@ export default {
     async login() {
       const provider = new firebase.auth.GoogleAuthProvider()
       await firebase.auth().signInWithPopup(provider)
-      this.$router.push('/')
+      this.$router.push('/userTop')
     },
   },
 }

@@ -11,6 +11,9 @@ if (!firebase.apps.length) {
     measurementId: 'G-SRX1BQMK7P',
   })
 }
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(() => {
+  console.log('Initialized!') // 確認用のメッセージ
+})
 
 export default firebase
 

@@ -15,26 +15,32 @@ export const state = () => ({
   })
   
   export const mutations = {
-    mutateTitle(state,payload) {
-      state.memos.title = payload
-    },
+    // mutateTitle(state,payload) {
+    //   state.memos.title = payload
+    // },
     focusMemo(state,payload) {
       console.log(payload)
-       state.memo.title = payload.memo.title
-       state.memo.content = payload.memo.content
+      state.memo.title = payload.memo.title
+      state.memo.content = payload.memo.content
+    },
+    newMemo(state,payload) {
+      console.log(payload)
+      state.memos.push(payload)
     }
   }
   export const actions ={
-    addMemo({commit},payload) {
+    newMemo({commit}) {
       const memo = {
-        title:payload.memo.title,
-        content:payload.memo.content,
+        title:'',
+        content:'',
         id:memoRef.doc().id,
-        created_at: firebase.firestore.FieldValue.serverTimestamp()
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        userNeme:firebase.auth().currentUser.displayName
       }
       memoRef.add(memo)
+      commit('newMemo',memo)
     }
   }
-  export const getters = {
-    getStateTitle: (state) => state.memos.title
-  }
+  // export const getters = {
+  //   getStateTitle: (state) => state.memos.title
+  // }

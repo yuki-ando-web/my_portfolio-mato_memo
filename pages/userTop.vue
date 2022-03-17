@@ -6,7 +6,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip v-onclick="newMemo"> 新規作成 </v-chip>
+                <v-chip v-on:click="newMemo"> 新規作成 </v-chip>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -112,6 +112,7 @@
 </template>
 
 <script>
+// import firebase from 'firebase'
 export default {
   data() {
     return {
@@ -123,17 +124,26 @@ export default {
   },
   computed: {
     memos() {
-      return this.$store.state.userTop.memos
+      return this.$store.state.userTop.memos.slice().reverse();
     },
     memo() {
-      return this.$store.state.userTop.memo
-    }
+      return this.$store.state.userTop.memo;
+    },
   },
   methods: {
     focusMemo(memo) {
-      this.$store.commit("userTop/focusMemo",{memo})
+      this.$store.commit('userTop/focusMemo', { memo })
       console.log(memo.title)
     },
+    newMemo() {
+      this.$store.dispatch('userTop/newMemo')
+    },
   },
+  mounted() {
+    // console.log(firebase.auth().currentUser.displayName)
+  },
+  //  created() {
+  //    firebase.auth().onAuthStateChanged()
+  //  }
 }
 </script>
