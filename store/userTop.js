@@ -1,12 +1,11 @@
 import firebase from '~/plugins/firebase';
 const db = firebase.firestore();
-
 const memoRef = db.collection('memos')
 
 export const state = () => ({
   memos: [
-    {title:'タイトル1',content:'コンテンツ１'},
-    {title:'タイトル2',content:'コンテンツ2'},
+    // {title:'タイトル1',content:'コンテンツ１'},
+    // {title:'タイトル2',content:'コンテンツ2'},
   ],
   memo:{
     title:'',
@@ -28,8 +27,8 @@ export const state = () => ({
       state.memos.push(payload)
     }
   }
-  export const actions ={
-    newMemo({commit}) {
+  export const actions = {
+   async newMemo({commit}) {
       const memo = {
         title:'',
         content:'',
@@ -37,7 +36,7 @@ export const state = () => ({
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
         userNeme:firebase.auth().currentUser.displayName
       }
-      memoRef.add(memo)
+      await memoRef.add(memo)
       commit('newMemo',memo)
     }
   }
