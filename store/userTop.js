@@ -30,12 +30,25 @@ export const state = () => ({
   }
   export const actions = {
    async newMemo({commit}) {
-      const memo = {
+     let memo = null
+     if(firebase.auth().currentUser.displayName === null){
+       memo = {
         title:'',
         content:'',
-        id:memoRef.doc().id,
+        memoId:memoRef.doc().id,
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        userNeme:firebase.auth().currentUser.displayName
+        userNeme:'ゲスト',
+        userId:firebase.auth().currentUser.uid
+      }
+     } else{
+        memo = {
+         title:'',
+         content:'',
+         memoId:memoRef.doc().id,
+         created_at: firebase.firestore.FieldValue.serverTimestamp(),
+         userNeme:firebase.auth().currentUser.displayName,
+         userId:firebase.auth().currentUser.uid
+        }
       }
       await memoRef.add(memo)
       commit('newMemo',memo)

@@ -16,8 +16,8 @@
       <!-- <v-icon>mdi-menu</v-icon> -->
       <!-- </v-btn> -->
       <v-spacer></v-spacer>
-      <v-btn depressed> 新規登録 </v-btn>
-      <v-btn depressed v-on:click="login"> ログイン </v-btn>
+      <v-btn depressed @click="guestLogin"> ゲストログイン </v-btn>
+      <v-btn depressed @click="login"> ログイン </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -73,7 +73,13 @@ export default {
       const provider = new firebase.auth.GoogleAuthProvider()
       await firebase.auth().signInWithPopup(provider)
       this.$router.push('/userTop')
-    },
-  },
-}
+    }
+  //   async guestLogin() {
+  //     await firebase.auth().signInAnonymously()
+  //     firebase.auth().currentUser.displayName = 'ゲスト'
+  //     this.$router.push('/userTop')
+  //   },
+  // },
+  }
+  }
 </script>
