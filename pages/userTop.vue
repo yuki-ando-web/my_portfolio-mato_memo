@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-app>
+      <!-- サイドバー（検索、新規作成） -->
       <v-navigation-drawer app permanent>
         <v-list>
           <v-list-item>
@@ -37,10 +38,11 @@
       </v-navigation-drawer>
 
       <v-container>
+        <!-- メモ一覧 -->
         <v-row>
           <v-sheet class="overflow-y-auto" max-height="100vh" width="26vh">
-            <div v-for="(memo, index) in memos" v-bind:key="index">
-              <v-card height="25vh" width="25vh" v-on:click="focusMemo(memo)">
+            <div v-for="(memo, index) in stateMemos" v-bind:key="index">
+              <v-card height="25vh" width="25vh" v-on:click="focusMemo(index)">
                 <v-card-text>
                   <div class="text-caption mt-n3 ml-n3 p-0">
                     {{ memo.title }}
@@ -52,7 +54,7 @@
               </v-card>
             </div>
           </v-sheet>
-
+          <!-- メモ -->
           <v-col>
             <v-card height="100%">
               <div>
@@ -63,8 +65,9 @@
                   loader-height=""
                   full-width
                   placeholder="タイトル"
-                  v-bind:value="memo.title"
-                  v-on:input="inputTitle"
+                  v-model="memo.title"
+                  id="id"
+                  @input="changeMemo"
                 ></v-text-field>
                 <v-textarea
                   auto-grow
@@ -74,8 +77,9 @@
                   full-width
                   loading
                   placeholder="コンテンツ"
-                  v-bind:value="memo.content"
-                  v-on:input="inputContent"
+                  id="id"
+                  v-model="memo.content"
+                  @input="changeMemo"
                 ></v-textarea>
               </div>
               <v-divider class="my-2"></v-divider>
@@ -98,7 +102,7 @@
               </v-row>
               <v-container>
                 <v-row no-gutters align-content="">
-                  <div v-for="(memo, index) in memos" v-bind:key="index">
+                  <div>
                     <v-chip close filter ripple tag small>タグ </v-chip>
                   </div>
                 </v-row>
@@ -107,6 +111,7 @@
           </v-col>
         </v-row>
       </v-container>
+      <button @click="a">aaaa</button>
     </v-app>
   </div>
 </template>
@@ -116,34 +121,48 @@
 export default {
   data() {
     return {
-      // memo: {
-      //   title: '',
-      //   content: '',
-      // },
+      memo: {
+        title: '',
+        content: '',
+        index: 0,
+        id: '',
+      },
     }
   },
   computed: {
-    memos() {
-      return this.$store.state.userTop.memos.slice().reverse();
-    },
-    memo() {
-      return this.$store.state.userTop.memo;
+    stateMemos: {
+      get() {
+        return this.$store.getters['userTop/getStateMemos']
+      },
     },
   },
+
   methods: {
-    focusMemo(memo) {
-      this.$store.commit('userTop/focusMemo', { memo })
-      console.log(memo.title)
+    focusMemo(index) {
+      console.log(index)
+      this.memo.title = this.stateMemos[index].title
+      this.memo.content = this.stateMemos[index].content
+      this.memo.index = index
+      this.memo.id = this.stateMemos[index].id
     },
-    newMemo() {
-      this.$store.dispatch('userTop/newMemo')
+    async newMemo() {
+      await this.$store.dispatch('userTop/newMemo')
+      const index = 0
+      this.focusMemo(index)
+    },
+    changeMemo() {
+      this.$store.dispatch('userTop/changeMemo', this.memo)
+    },
+
+    a() {
+      console.log(this.stateMemos[0].title)
     },
   },
   mounted() {
-    // console.log(firebase.auth().currentUser.displayName)
+    this.memo.title = this.stateMemos[0].title
+    this.memo.content = this.stateMemos[0].content
+    this.memo.index = 0
+    this.memo.id = this.stateMemos[0].id
   },
-  //  created() {
-  //    firebase.auth().onAuthStateChanged()
-  //  }
 }
 </script>

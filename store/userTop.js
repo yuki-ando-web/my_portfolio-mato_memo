@@ -4,8 +4,8 @@ const memoRef = db.collection('memos')
 
 export const state = () => ({
   memos: [
-    // {title:'タイトル1',content:'コンテンツ１'},
-    // {title:'タイトル2',content:'コンテンツ2'},
+    {title:'タイトル1',content:'コンテンツ１',id:'a'},
+    {title:'タイトル2',content:'コンテンツ2',id:'b'},
   ],
   memo:{
     title:'',
@@ -14,17 +14,18 @@ export const state = () => ({
   })
   
   export const mutations = {
-    // mutateTitle(state,payload) {
-    //   state.memos.title = payload
-    // },
-    focusMemo(state,payload) {
+    changeMemo(state,payload) {
       console.log(payload)
-      state.memo.title = payload.memo.title
-      state.memo.content = payload.memo.content
+      state.memos[payload.index].title = payload.title
+      state.memos[payload.index].content = payload.content
     },
+
     newMemo(state,payload) {
       console.log(payload)
-      state.memos.push(payload)
+      state.memos.unshift(payload)
+    },
+    changeTitle() {
+
     }
   }
   export const actions = {
@@ -38,8 +39,42 @@ export const state = () => ({
       }
       await memoRef.add(memo)
       commit('newMemo',memo)
+    },
+    
+   changeMemo({commit},payload){
+      memoRef.where('id', '==', payload.id).get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const updateMemo = {
+          title:payload.title,
+          content:payload.content
+          }
+          memoRef.doc(doc.id).update(updateMemo)
+          })
+        })
+        commit('changeMemo',payload)
+      },
+  //  async changeMemo({commit},payload){
+  //   try {  memoRef.where('id', '==', payload.id).get()
+  //     .then(snapshot => {
+  //      snapshot.forEach(doc => {
+  //         const updateMemo = {
+  //         title:payload.title,
+  //         content:payload.content
+  //         }
+       
+  //         await memoRef.doc(doc.id).update(updateMemo)
+  //       } catch(e) {
+  //         console,log("エラー")
+  //       }
+  //         })
+  //       })
+  //       commit('changeMemo',payload)
+  //     },
+    }
+  
+  export const getters = {
+    getStateMemos(state) {
+      return state.memos
     }
   }
-  // export const getters = {
-  //   getStateTitle: (state) => state.memos.title
-  // }
