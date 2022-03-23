@@ -125,7 +125,6 @@ export default {
         title: '',
         content: '',
         index: 0,
-        id: '',
       },
     }
   },
@@ -143,7 +142,6 @@ export default {
       this.memo.title = this.stateMemos[index].title
       this.memo.content = this.stateMemos[index].content
       this.memo.index = index
-      this.memo.id = this.stateMemos[index].id
     },
     async newMemo() {
       await this.$store.dispatch('userTop/newMemo')
@@ -162,7 +160,6 @@ export default {
     this.memo.title = this.stateMemos[0].title
     this.memo.content = this.stateMemos[0].content
     this.memo.index = 0
-    this.memo.id = this.stateMemos[0].id
   },
 }
 </script>
