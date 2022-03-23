@@ -24,9 +24,15 @@ export const state = () => ({
       console.log(payload)
       state.memos.unshift(payload)
     },
-    changeTitle() {
-
-    }
+    deleteMemo(state,payload) {
+      for (let i = 0; i < state.memos.length; i++) {
+        const ob = state.memos[i];
+        if (ob.id === payload.id
+          ) {
+            state.memos.splice(i, 1);
+          }
+        }
+    },
   }
   export const actions = {
    async newMemo({commit}) {
@@ -67,24 +73,16 @@ export const state = () => ({
         })
         commit('changeMemo',payload)
       },
-  //  async changeMemo({commit},payload){
-  //   try {  memoRef.where('id', '==', payload.id).get()
-  //     .then(snapshot => {
-  //      snapshot.forEach(doc => {
-  //         const updateMemo = {
-  //         title:payload.title,
-  //         content:payload.content
-  //         }
-       
-  //         await memoRef.doc(doc.id).update(updateMemo)
-  //       } catch(e) {
-  //         console,log("エラー")
-  //       }
-  //         })
-  //       })
-  //       commit('changeMemo',payload)
-  //     },
-    }
+ deleteMemo({commit},payload){
+  memoRef.where('memoId', '==', payload.memoId).get()
+  .then(snapshot => {
+    snapshot.forEach(doc => {
+      memoRef.doc(doc.id).delete()
+      })
+    })
+    commit('deleteMemo',payload)
+  },
+ }
   
   export const getters = {
     getStateMemos(state) {
