@@ -43,6 +43,9 @@
           <v-sheet class="overflow-y-auto" max-height="100vh" width="26vh">
             <div v-for="(memo, index) in stateMemos" v-bind:key="index">
               <v-card height="25vh" width="25vh" v-on:click="focusMemo(index)">
+                
+
+                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo">X</v-btn>
                 <v-card-text>
                   <div class="text-caption mt-n3 ml-n3 p-0">
                     {{ memo.title }}
@@ -125,6 +128,7 @@ export default {
         title: '',
         content: '',
         index: 0,
+        memoId:'',
       },
     }
   },
@@ -142,6 +146,7 @@ export default {
       this.memo.title = this.stateMemos[index].title
       this.memo.content = this.stateMemos[index].content
       this.memo.index = index
+      this.memo.memoId = this.stateMemos[index].memoId
     },
     async newMemo() {
       await this.$store.dispatch('userTop/newMemo')
@@ -150,6 +155,9 @@ export default {
     },
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
+    },
+    deleteMemo(){
+      this.$store.dispatch('userTop/deleteMemo', this.memo)
     },
 
     a() {
@@ -160,6 +168,7 @@ export default {
     this.memo.title = this.stateMemos[0].title
     this.memo.content = this.stateMemos[0].content
     this.memo.index = 0
+    this.memo.memoId = this.stateMemos[0].memoId
   },
 }
 </script>
