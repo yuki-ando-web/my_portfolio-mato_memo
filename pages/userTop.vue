@@ -43,9 +43,9 @@
           <v-sheet class="overflow-y-auto" max-height="100vh" width="26vh">
             <div v-for="(memo, index) in stateMemos" v-bind:key="index">
               <v-card height="25vh" width="25vh" v-on:click="focusMemo(index)">
-                
-
-                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo">X</v-btn>
+                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo"
+                  >X</v-btn
+                >
                 <v-card-text>
                   <div class="text-caption mt-n3 ml-n3 p-0">
                     {{ memo.title }}
@@ -88,25 +88,34 @@
               <v-divider class="my-2"></v-divider>
 
               <v-row>
-                <div class>
-                  <v-col class="mr-n4 text-no-wrap text-caption"> タグ </v-col>
-                </div>
-
-                <div height="3px">
+                <div>
                   <v-col class="mt-n6 pt-n6 text-caption">
                     <v-card-actions>
                       <v-text-field
                         text-caption
                         placeholder="タグを入力"
+                        v-model="tag"
                       ></v-text-field>
+
+                      <v-btn depressed @click="addTag">追加</v-btn>
                     </v-card-actions>
                   </v-col>
                 </div>
               </v-row>
               <v-container>
                 <v-row no-gutters align-content="">
-                  <div>
-                    <v-chip close filter ripple tag small>タグ </v-chip>
+                  <div v-for="(memo, index) in stateMemos" v-bind:key="index">
+                    <v-chip
+                      @click:close="deleteTag(index,memo)"
+                      v-for="(tag, index) in memo.tag"
+                      v-bind:key="index"
+                      close
+                      filter
+                      ripple
+                      tag
+                      small
+                      >{{ tag }}</v-chip
+                    >
                   </div>
                 </v-row>
               </v-container>
@@ -114,7 +123,7 @@
           </v-col>
         </v-row>
       </v-container>
-      <button @click="a">aaaa</button>
+      <button>aaaa</button>
     </v-app>
   </div>
 </template>
@@ -127,9 +136,10 @@ export default {
       memo: {
         title: '',
         content: '',
-        index: 0,
-        memoId:'',
+        index: '',
+        memoId: '',
       },
+      tag: '',
     }
   },
   computed: {
@@ -143,10 +153,12 @@ export default {
   methods: {
     focusMemo(index) {
       console.log(index)
-      this.memo.title = this.stateMemos[index].title
-      this.memo.content = this.stateMemos[index].content
-      this.memo.index = index
-      this.memo.memoId = this.stateMemos[index].memoId
+      if (this.stateMemos.length > 0) {
+        this.memo.title = this.stateMemos[index].title
+        this.memo.content = this.stateMemos[index].content
+        this.memo.index = index
+        this.memo.memoId = this.stateMemos[index].memoId
+      }
     },
     async newMemo() {
       await this.$store.dispatch('userTop/newMemo')
@@ -156,19 +168,32 @@ export default {
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
-    deleteMemo(){
+    deleteMemo() {
       this.$store.dispatch('userTop/deleteMemo', this.memo)
     },
-
+    addTag() {
+      this.$store.dispatch('userTop/addTag', {
+        tag: this.tag,
+        memoId: this.memo.memoId,
+      })
+      this.tag = ''
+    },
+    deleteTag(index,memo) {
+      console.log(index)
+      console.log(memo)
+      this.$store.dispatch('userTop/deleteTag',index,memo)
+},
     a() {
-      console.log(this.stateMemos[0].title)
+      console.log()
     },
   },
   mounted() {
-    this.memo.title = this.stateMemos[0].title
-    this.memo.content = this.stateMemos[0].content
-    this.memo.index = 0
-    this.memo.memoId = this.stateMemos[0].memoId
+    if (this.stateMemos.length > 0) {
+      this.memo.title = this.stateMemos[0].title
+      this.memo.content = this.stateMemos[0].content
+      this.memo.index = 0
+      this.memo.memoId = this.stateMemos[0].memoId
+    }
   },
 }
 </script>
