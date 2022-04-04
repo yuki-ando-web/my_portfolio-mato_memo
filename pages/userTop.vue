@@ -94,7 +94,7 @@
                       <v-text-field
                         text-caption
                         placeholder="タグを入力"
-                        v-model="tag"
+                        v-model="inputTag"
                       ></v-text-field>
 
                       <v-btn depressed @click="addTag">追加</v-btn>
@@ -104,18 +104,17 @@
               </v-row>
               <v-container>
                 <v-row no-gutters align-content="">
-                  <div v-for="(memo, index) in stateMemos" v-bind:key="index">
+                  <div v-for="(tag, index) in userTag" v-bind:key="index">
                     <v-chip
-                      @click:close="deleteTag(index,memo)"
-                      v-for="(tag, index) in memo.tag"
-                      v-bind:key="index"
+                      @click:close="deleteTag(tag)"
                       close
                       filter
                       ripple
                       tag
                       small
-                      >{{ tag }}</v-chip
                     >
+                      {{ tag }}
+                    </v-chip>
                   </div>
                 </v-row>
               </v-container>
@@ -123,7 +122,9 @@
           </v-col>
         </v-row>
       </v-container>
-      <button>aaaa</button>
+      <p>{{ stateMemos }}</p>
+      <!-- <p>{{ stateMemos[0].tag }}</p> -->
+      <button @click="b">aaaa</button>
     </v-app>
   </div>
 </template>
@@ -136,10 +137,12 @@ export default {
       memo: {
         title: '',
         content: '',
-        index: '',
+        index: '0',
         memoId: '',
       },
       tag: '',
+      inputTag: '',
+      userTag: '',
     }
   },
   computed: {
@@ -150,6 +153,16 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.stateMemos.length > 0) {
+      this.memo.title = this.stateMemos[0].title
+      this.memo.content = this.stateMemos[0].content
+      this.memo.index = 0
+      this.memo.memoId = this.stateMemos[0].memoId
+      this.userTag = this.stateMemos[0].tag
+    }
+    
+  },
   methods: {
     focusMemo(index) {
       console.log(index)
@@ -158,10 +171,12 @@ export default {
         this.memo.content = this.stateMemos[index].content
         this.memo.index = index
         this.memo.memoId = this.stateMemos[index].memoId
+        this.userTag = this.stateMemos[index].tag
       }
+      console.log(this.stateMemos[index].tag)
     },
-    async newMemo() {
-      await this.$store.dispatch('userTop/newMemo')
+    newMemo() {
+      this.$store.dispatch('userTop/newMemo')
       const index = 0
       this.focusMemo(index)
     },
@@ -173,27 +188,25 @@ export default {
     },
     addTag() {
       this.$store.dispatch('userTop/addTag', {
-        tag: this.tag,
+        tag: this.inputTag,
         memoId: this.memo.memoId,
       })
-      this.tag = ''
+      this.inputTag = ''
     },
-    deleteTag(index,memo) {
-      console.log(index)
-      console.log(memo)
-      this.$store.dispatch('userTop/deleteTag',index,memo)
-},
+    deleteTag(tag) {
+      if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
+        this.$store.dispatch('userTop/deleteTag', {
+          removeTag: tag,
+          memoId: this.memo.memoId,
+        })
+      }
+    },
     a() {
       console.log()
     },
-  },
-  mounted() {
-    if (this.stateMemos.length > 0) {
-      this.memo.title = this.stateMemos[0].title
-      this.memo.content = this.stateMemos[0].content
-      this.memo.index = 0
-      this.memo.memoId = this.stateMemos[0].memoId
-    }
+    b() {
+      console.log(this.userTag)
+    },
   },
 }
 </script>

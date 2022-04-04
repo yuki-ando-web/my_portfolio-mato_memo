@@ -32,14 +32,6 @@ export const mutations = {
       }
     }
   },
-  deleteTag(state, payload) {
-    for (let i = 0; i < state.memos.length; i++) {
-      const ob = state.memos[i]
-      if (ob.memoId === payload.memoId) {
-        state.memos.splice(i, 1)
-      }
-    }
-  },
   addTag(state,payload) {
     for (let i = 0; i < state.memos.length; i++) {
       const ob = state.memos[i]
@@ -47,10 +39,16 @@ export const mutations = {
       state.memos[i].tag.push(payload.tag)
     }
   }
-}}
+},
+  deleteTag(state, payload) {
+    const deleteTagMemo = state.memos.find((e) => e.memoId === payload.memoId )
+    console.log(deleteTagMemo)
+    const deleteTagIndex = deleteTagMemo.tag.findIndex((e) => e.tag === payload.removeTag)
+    deleteTagMemo.tag.splice(deleteTagIndex,1)
+  },
+}
 export const actions = {
-  async newMemo({ commit }) {
-    console.log('1')
+  newMemo({ commit }) {
     let memo = null
     if (firebase.auth().currentUser === null) {
       memo = {
@@ -73,7 +71,7 @@ export const actions = {
         tag:[]
       }
     }
-    await memoRef.add(memo)
+    memoRef.add(memo)
     commit('newMemo', memo)
   },
 
@@ -93,18 +91,31 @@ export const actions = {
     commit('changeMemo', payload)
       },
   deleteTag({ commit }, payload) {
-    console.log(payload.memo.memoId)
-    memoRef
-      .where('memoId', '==', payload.memo.memoId)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          memoRef.doc(doc.id).update({tag: firebase.firestore.FieldValue.arrayRemove(tag[payload.index])})
+    console.log(payload)
+    return new Promise((resolve, reject) => { memoRef
+    .where("tag", "array-contains", payload.removeTag)
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        console.log(`${doc.id}: ${doc.data()}`)
+        memoRef.doc(doc.id).update({tag: firebase.firestore.FieldValue.arrayRemove(payload.removeTag)})
+        .then(ref => {
+          resolve(true)
+          console.log()
+        })
+        .catch(error => {
+          console.error('An error occurred in editUser(): ', error)
+          resolve(error)
         })
       })
-    commit('changeMemo', payload)
+      })
+      commit('deleteTag',payload)
+      })
+  
+    // commit('deleteTag', payload)
       },
   deleteMemo({ commit }, payload) {
+    console.log(payload)
     memoRef
       .where('memoId', '==', payload.memoId)
       .get()
@@ -127,6 +138,10 @@ export const actions = {
       })
       commit('addTag',payload)
   },
+  b(){
+    const c =  memoRef.where('memoId').get()
+    console.log(c)
+  }
 }
 
 export const getters = {
