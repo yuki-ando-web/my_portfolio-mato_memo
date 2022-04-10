@@ -7,7 +7,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip v-on:click="newMemo"> 新規作成 </v-chip>
+                <v-chip v-on:click="moveTodoList"> 一覧画面に戻る </v-chip>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -186,10 +186,9 @@ export default {
         this.userTag = this.stateMemos[index].tag
       }
     },
-    newMemo() {
-      this.$store.dispatch('userTop/newMemo')
-      const index = 0
-      this.focusMemo(index)
+    moveTodoList() {
+      this.$router.push(`/userTop/todoList`)
+      
     },
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
