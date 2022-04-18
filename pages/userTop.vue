@@ -7,7 +7,12 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip v-on:click="newMemo"> 新規作成 </v-chip>
+                <v-chip v-on:click="newMemo">新規作成</v-chip>
+              
+                <v-chip v-on:click="resetSearch"> 検索条件をクリア</v-chip>
+              </v-list-item-title>
+              <v-list-item-title>
+                
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -16,8 +21,12 @@
               <v-list-item-title> ワード検索 </v-list-item-title>
               <v-form>
                 <v-text-field
+                  v-model="searchWordUserTop"
                   placeholder="検索ワードを入力"
                   dense
+                  append-outer-icon="mdi-magnify"
+                  @click:append-outer="searchWordMemo(searchWordUserTop)"
+                  v-on:keydown.enter="searchWordMemo(searchWordUserTop)"
                 ></v-text-field>
               </v-form>
             </v-list-item-content>
@@ -26,32 +35,47 @@
             <v-list-item-content>
               <v-list-item-title> タグ検索 </v-list-item-title>
               <v-form>
-                <v-text-field placeholder="タグ入力" dense></v-text-field>
+                <v-text-field
+                  placeholder="タグ入力"
+                  dense
+                  v-model="searchTagUserTop"
+                  append-outer-icon="mdi-magnify"
+                  v-on:click:append-outer="searchTagMemo(searchTagUserTop)"
+                  v-on:keydown.enter="searchTagMemo(searchTagUserTop)"
+                  v-on:input="filterTag(searchTagUserTop)"
+                ></v-text-field>
               </v-form>
-              <v-list-item-title> F </v-list-item-title>
-              <v-list-item-subtitle>firebase</v-list-item-subtitle>
-              <v-list-item-title> N </v-list-item-title>
-              <v-list-item-subtitle>nuxt</v-list-item-subtitle>
+              <v-list-item-title>タグ一覧</v-list-item-title>
+              <v-list-item-group>
+                <v-list-item
+                  v-for="displayTag in displayTags"
+                  :key="displayTag"
+                >
+                  <v-list-item-title @click="moveTag(displayTag)">{{
+                    displayTag
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
 
-      <v-container>
+      <v-container >
         <!-- メモ一覧 -->
         <v-row>
           <v-sheet class="overflow-y-auto" max-height="100vh" width="26vh">
-            <div v-for="(memo, index) in stateMemos" v-bind:key="index">
+            <div v-for="(memo, index) in displayUserMemos" v-bind:key="index">
               <v-card height="25vh" width="25vh" v-on:click="focusMemo(index)">
                 <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo"
                   >X</v-btn
                 >
+                  <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
+                    {{ memo.title.substr(0, 12) }}
+                  </v-card-subtitle>
                 <v-card-text>
-                  <div class="text-caption mt-n3 ml-n3 p-0">
-                    {{ memo.title }}
-                  </div>
                   <div class="text-caption mt-n1 ml-n2 mb-n2">
-                    {{ memo.content }}
+                    {{ memo.content.substr(0, 100) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -62,10 +86,9 @@
             <v-card height="100%">
               <div>
                 <v-text-field
+                autofocus
                   auto-grow
                   dense
-                  height
-                  loader-height=""
                   full-width
                   placeholder="タイトル"
                   v-model="memo.title"
@@ -73,12 +96,9 @@
                   @input="changeMemo"
                 ></v-text-field>
                 <v-textarea
-                  auto-grow
                   dense
-                  height="60vh"
-                  loader-height=""
+                  rows="20"
                   full-width
-                  loading
                   placeholder="コンテンツ"
                   id="id"
                   v-model="memo.content"
@@ -122,9 +142,6 @@
           </v-col>
         </v-row>
       </v-container>
-      <p>{{ stateMemos }}</p>
-      <!-- <p>{{ stateMemos[0].tag }}</p> -->
-      <button @click="b">aaaa</button>
     </v-app>
   </div>
 </template>
@@ -143,48 +160,69 @@ export default {
       tag: '',
       inputTag: '',
       userTag: '',
+      searchWordUserTop: '',
+      displayUserMemos: '',
+      displayTags: '',
     }
   },
   computed: {
-    stateMemos: {
+    stateUserMemos: {
       get() {
-        return this.$store.getters['userTop/getStateMemos']
+        return this.$store.getters['userTop/getStateUserMemos']
       },
+    },
+    userName: {
+      get() {
+        return this.$store.getters['userTop/getUserName']
+      },
+    },
+    stateUserTag: {
+      get() {
+        return this.$store.getters['userTop/getStateTag']
+      }
     },
   },
 
   mounted() {
-    if (this.stateMemos.length > 0) {
-      this.memo.title = this.stateMemos[0].title
-      this.memo.content = this.stateMemos[0].content
+    if (this.stateUserMemos.length > 0) {
+      this.memo.title = this.stateUserMemos[0].title
+      this.memo.content = this.stateUserMemos[0].content
       this.memo.index = 0
-      this.memo.memoId = this.stateMemos[0].memoId
-      this.userTag = this.stateMemos[0].tag
+      this.memo.memoId = this.stateUserMemos[0].memoId
+      this.userTag = this.stateUserMemos[0].tag
     }
-    
+    this.displayUserMemos = this.stateUserMemos
+    this.displayTags = this.stateUserTag
   },
   methods: {
     focusMemo(index) {
       console.log(index)
-      if (this.stateMemos.length > 0) {
-        this.memo.title = this.stateMemos[index].title
-        this.memo.content = this.stateMemos[index].content
+      if (this.displayUserMemos.length > 0) {
+        this.memo.title = this.displayUserMemos[index].title
+        this.memo.content = this.displayUserMemos[index].content
         this.memo.index = index
-        this.memo.memoId = this.stateMemos[index].memoId
-        this.userTag = this.stateMemos[index].tag
+        this.memo.memoId = this.displayUserMemos[index].memoId
+        this.userTag = this.displayUserMemos[index].tag
+      } else {
+        this.memo.title = ''
+        this.memo.content = ''
+        this.memo.index = ''
+        this.memo.memoId = ''
+        this.userTag = ''
       }
-      console.log(this.stateMemos[index].tag)
     },
     newMemo() {
       this.$store.dispatch('userTop/newMemo')
-      const index = 0
-      this.focusMemo(index)
+      this.resetSearch() 
+      this.focusMemo(0)
     },
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
     deleteMemo() {
       this.$store.dispatch('userTop/deleteMemo', this.memo)
+      this.displayUserMemos = this.stateUserMemos
+      this.focusMemo(0)
     },
     addTag() {
       this.$store.dispatch('userTop/addTag', {
@@ -192,6 +230,7 @@ export default {
         memoId: this.memo.memoId,
       })
       this.inputTag = ''
+      this.displayTags = this.stateUserTag
     },
     deleteTag(tag) {
       if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
@@ -200,13 +239,36 @@ export default {
           memoId: this.memo.memoId,
         })
       }
+      this.displayTags = this.stateUserTag
     },
-    a() {
-      console.log()
+    searchWordMemo() {
+      this.displayUserMemos = this.stateUserMemos.filter(
+        (e) =>
+          e.title.includes(this.searchWordUserTop) ||
+          e.content.includes(this.searchWordUserTop)
+      )
+      this.focusMemo(0)
     },
-    b() {
-      console.log(this.userTag)
+    searchTagMemo() {
+      this.displayUserMemos = this.stateUserMemos.filter((e) =>
+        e.tag.includes(this.searchTagUserTop)
+      )
+      this.focusMemo(0)
     },
+    moveTag(displayTag) {
+      this.displayUserMemos = this.stateUserMemos.filter((e) =>
+        e.tag.includes(displayTag)
+      )
+    },
+    filterTag(searchTagUserTop) {
+      this.displayTags = this.stateUserTag.filter((e) => e.includes(searchTagUserTop))
+    },
+    resetSearch() {
+      this.displayUserMemos = this.stateUserMemos
+      this.searchWordUserTop = ''
+      this.searchTagUserTop = ''
+    },
+    
   },
 }
 </script>

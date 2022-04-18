@@ -1,23 +1,16 @@
 <template>
   <v-app dark>
     <v-app-bar :clipped-left="clipped" fixed app>
-      <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
-      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant"> -->
-      <!-- <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon> -->
-      <!-- <v-btn icon @click.stop="clipped = !clipped"> -->
-      <!-- <v-icon>mdi-application</v-icon> -->
-      <!-- </v-btn> -->
-      <!-- <v-btn icon @click.stop="fixed = !fixed"> -->
-      <!-- <v-icon>mdi-minus</v-icon> -->
-      <!-- </v-btn> -->
+      
       <v-toolbar-title v-text="title" />
-      <!-- <v-spacer /> -->
-      <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer"> -->
-      <!-- <v-icon>mdi-menu</v-icon> -->
-      <!-- </v-btn> -->
+      <v-toolbar-title  class="caption ml-4 mt-3">ユーザー:{{ userName }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn depressed @click="guestLogin"> ゲストログイン </v-btn>
-      <v-btn depressed @click="login"> ログイン </v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex">全てのユーザーのメモ</v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveUserTop"
+        >{{ userName }}のメモ一覧&新規作成</v-btn
+      >
+      <v-btn class="grey lighten-2 mr-1" depressed @click="logout"> ログアウト </v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed @click="login"> ログイン </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -41,8 +34,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-
 export default {
   name: 'DefaultLayout',
   data() {
@@ -70,16 +61,26 @@ export default {
   },
   methods: {
     async login() {
-      const provider = new firebase.auth.GoogleAuthProvider()
-      await firebase.auth().signInWithPopup(provider)
+      await this.$store.dispatch('userTop/login')
       this.$router.push('/userTop')
-    }
-  //   async guestLogin() {
-  //     await firebase.auth().signInAnonymously()
-  //     firebase.auth().currentUser.displayName = 'ゲスト'
-  //     this.$router.push('/userTop')
-  //   },
-  // },
-  }
-  }
+    },
+    async logout() {
+      await this.$store.dispatch('userTop/logout')
+      this.$router.push('/userTop')
+    },
+    moveIndex() {
+      this.$router.push('/memoIndex')
+    },
+    moveUserTop() {
+      this.$router.push('/userTop')
+    },
+  },
+  computed: {
+    userName: {
+      get() {
+        return this.$store.getters['userTop/getUserName']
+      },
+    },
+  },
+}
 </script>

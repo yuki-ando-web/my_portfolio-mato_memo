@@ -5,17 +5,14 @@ const auth = firebase.auth()
 const user = auth.currentUser;
 let userName = 'ゲスト'
 let userId = ''
+// const userConfilm  = 
 firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
+if (user) {
     userName = user.displayName
     userId = user.uid
   } 
 });
-console.log(userName)
 console.log(user)
-const arr = ['tanaka', 'yamada', 'sato', 'suzuki', 'tanaka'];
-const pattern = 'sato';
-console.log(arr.includes(pattern))
 
 
 
@@ -70,9 +67,21 @@ export const mutations = {
   },
 }
 export const actions = {
+  login() {
+return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+
+  },
+  logout(){
+    firebase.auth().signOut()
+  },
   newMemo({ commit }) {
-    // let memo = null
-    // if (firebase.auth().currentUser === null) {
+    
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          userName = user.displayName
+          userId = user.uid
+        } 
+      });
      const memo = {
         title: '',
         content: '',
@@ -82,23 +91,12 @@ export const actions = {
         memoUserId: userId,
         tag: [],
       }
-      // }
-    //  else {
-    //   memo = {
-    //     title: '',
-    //     content: '',
-    //     memoId: memoRef.doc().id,
-    //     created_at: firebase.firestore.FieldValue.serverTimestamp(),
-    //     userName: user.displayName,
-    //     userId: user.uid,
-    //     tag: [],
-    //   }
-    // }
     memoRef.add(memo)
     commit('newMemo', memo)
   },
 
   changeMemo({ commit }, payload) {
+    console.log(payload)
     memoRef
       .where('memoId', '==', payload.memoId)
       .get()
@@ -175,14 +173,35 @@ export const actions = {
 
 export const getters = {
   getStateMemos(state) {
+    return state.memos
+  },
+  getStateUserMemos(state) {
     return state.memos.filter((e)=> e.memoUserName === userName)
   },
-  getAllTag(state) {
-    let allTag = []
+  getStateTag(state) {
+    let stateTag = []
    for(let i = 0; i < state.memos.length; i++) {
-     allTag = allTag.concat(state.memos[i].tag)
+     stateTag = stateTag.concat(state.memos[i].tag)
     }
-    allTag = Array.from(new Set(allTag))
-    return allTag
+    stateTag = Array.from(new Set(stateTag))
+    return stateTag
+  },
+  getStateUserTag(state) {
+    let stateUserTag = []
+   for(let i = 0; i < state.memos.length; i++) {
+     stateUserTag = stateUserTag.concat(state.memos[i].tag)
+    }
+    stateUserTag = Array.from(new Set(stateUserTag))
+    return stateUserTag.filter((e)=> e.memoUserName === userName)
+  },
+  getUserName(state) {
+    // userConfilm()
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+          userName = user.displayName
+          userId = user.uid
+        } 
+      });
+      return userName
   }
 }
