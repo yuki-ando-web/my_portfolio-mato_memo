@@ -2,24 +2,22 @@
   <div>
     <v-app>
       <!-- サイドバー（検索、新規作成） -->
-      <v-navigation-drawer app permanent>
+      <v-navigation-drawer app >
         <v-list>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
                 <v-chip v-on:click="newMemo">新規作成</v-chip>
-              
+
                 <v-chip v-on:click="resetSearch"> 検索条件をクリア</v-chip>
               </v-list-item-title>
-              <v-list-item-title>
-                
-              </v-list-item-title>
+              <v-list-item-title> </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> ワード検索 </v-list-item-title>
-              <v-form>
+            
                 <v-text-field
                   v-model="searchWordUserTop"
                   placeholder="検索ワードを入力"
@@ -28,13 +26,13 @@
                   @click:append-outer="searchWordMemo(searchWordUserTop)"
                   v-on:keydown.enter="searchWordMemo(searchWordUserTop)"
                 ></v-text-field>
-              </v-form>
+              
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> タグ検索 </v-list-item-title>
-              <v-form>
+            
                 <v-text-field
                   placeholder="タグ入力"
                   dense
@@ -44,7 +42,7 @@
                   v-on:keydown.enter="searchTagMemo(searchTagUserTop)"
                   v-on:input="filterTag(searchTagUserTop)"
                 ></v-text-field>
-              </v-form>
+              
               <v-list-item-title>タグ一覧</v-list-item-title>
               <v-list-item-group>
                 <v-list-item
@@ -61,18 +59,21 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-container >
+      <v-container>
         <!-- メモ一覧 -->
         <v-row>
-          <v-sheet class="overflow-y-auto" max-height="100vh" width="26vh">
+          <v-sheet class="overflow-y-auto" max-height="100vh" :width="cardsWidth">
             <div v-for="(memo, index) in displayUserMemos" v-bind:key="index">
-              <v-card height="25vh" width="25vh" v-on:click="focusMemo(index)">
+              <v-card
+                height="25vh"
+                v-on:click="focusMemo(index)"
+              >
                 <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo"
                   >X</v-btn
                 >
-                  <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
-                    {{ memo.title.substr(0, 12) }}
-                  </v-card-subtitle>
+                <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
+                  {{ memo.title.substr(0, 12) }}
+                </v-card-subtitle>
                 <v-card-text>
                   <div class="text-caption mt-n1 ml-n2 mb-n2">
                     {{ memo.content.substr(0, 100) }}
@@ -82,11 +83,11 @@
             </div>
           </v-sheet>
           <!-- メモ -->
-          <v-col>
-            <v-card height="100%">
+          <v-col >
+            <v-card height="100%" v-show="$vuetify.breakpoint.smAndUp">
               <div>
                 <v-text-field
-                autofocus
+                  autofocus
                   auto-grow
                   dense
                   full-width
@@ -163,6 +164,7 @@ export default {
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
+      
     }
   },
   computed: {
@@ -178,10 +180,21 @@ export default {
     },
     stateUserTag: {
       get() {
-        return this.$store.getters['userTop/getStateTag']
-      }
+        return this.$store.getters['userTop/getStateUserTag']
+      },
     },
+    cardsWidth () {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return "100vh"
+          case 'sm': return "25vh"
+          case 'md': return "25vh"
+          case 'lg': return "25vh"
+          case 'xl': return "25vh"
+        }
+          return undefined;
+      },
   },
+  
 
   mounted() {
     if (this.stateUserMemos.length > 0) {
@@ -213,7 +226,7 @@ export default {
     },
     newMemo() {
       this.$store.dispatch('userTop/newMemo')
-      this.resetSearch() 
+      this.resetSearch()
       this.focusMemo(0)
     },
     changeMemo() {
@@ -242,10 +255,11 @@ export default {
       this.displayTags = this.stateUserTag
     },
     searchWordMemo() {
+      const upSword = this.searchWordUserTop.toUpperCase()
       this.displayUserMemos = this.stateUserMemos.filter(
         (e) =>
-          e.title.includes(this.searchWordUserTop) ||
-          e.content.includes(this.searchWordUserTop)
+        e.title.toUpperCase().includes(upSword) ||
+          e.content.toUpperCase().includes(upSword)
       )
       this.focusMemo(0)
     },
@@ -261,14 +275,18 @@ export default {
       )
     },
     filterTag(searchTagUserTop) {
-      this.displayTags = this.stateUserTag.filter((e) => e.includes(searchTagUserTop))
+      this.displayTags = this.stateUserTag.filter((e) =>
+        e.includes(searchTagUserTop)
+      )
     },
     resetSearch() {
       this.displayUserMemos = this.stateUserMemos
       this.searchWordUserTop = ''
       this.searchTagUserTop = ''
     },
-    
+    // changeDisplayTextArea() {
+    //   this.$vuetify.breakpoint.mobile = !this.$vuetify.breakpoint.mobile
+    // },
   },
 }
 </script>
