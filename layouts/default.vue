@@ -72,7 +72,7 @@ export default {
       this.$router.push('/memoIndex')
     },
     moveUserTop() {
-      this.$router.push('/userTop')
+      this.$router.push('/')
     },
   },
   computed: {
