@@ -165,6 +165,7 @@ export default {
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
+      
     }
   },
   computed: {
@@ -213,7 +214,18 @@ export default {
       }
       return undefined
     },
+    cardsWidth () {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return "100vh"
+          case 'sm': return "25vh"
+          case 'md': return "25vh"
+          case 'lg': return "25vh"
+          case 'xl': return "25vh"
+        }
+          return undefined;
+      },
   },
+  
 
   mounted() {
     if (this.stateUserMemos.length > 0) {
