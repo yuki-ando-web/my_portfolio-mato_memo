@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-container>
-      <v-navigation-drawer app permanent>
+      <v-navigation-drawer app>
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -55,7 +55,7 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-navigation-drawer right app permanent>
+      <v-navigation-drawer right app>
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -72,27 +72,30 @@
       </v-navigation-drawer>
 
       <!-- <div>{{stateMemos}}</div> -->
-
-      <v-card
-        v-for="(memo, index) in displayMemos"
-        v-bind:key="index"
-        height="184"
-      >
-        <v-card-text>{{ memo.memoUserName }}</v-card-text>
-        <v-card-title class="mt-n8">
-          {{ memo.title.substr(0, 12) }}
-        </v-card-title>
-        <v-card-text>
-          {{ memo.content.substr(0, 24) }}
-        </v-card-text>
-        <v-card-actions>
-          <div v-for="tag in memo.tag" :key="tag">
-            <v-chip>{{ tag }}</v-chip>
-          </div>
-          <v-spacer></v-spacer>
-          <v-btn outlined @click="moveAbout(memo)">詳細</v-btn>
-        </v-card-actions>
-      </v-card>
+      <v-row>
+        <v-col cols="6"   v-for="(memo, index) in displayMemos"
+            v-bind:key="index">
+          <v-card
+           
+            height="184"
+          >
+            <v-card-text>{{ memo.memoUserName }}</v-card-text>
+            <v-card-title class="mt-n8">
+              {{ memo.title.substr(0, 12) }}
+            </v-card-title>
+            <v-card-text>
+              {{ memo.content.substr(0, 24) }}
+            </v-card-text>
+            <v-card-actions>
+              <div v-for="tag in memo.tag" :key="tag">
+                <v-chip>{{ tag }}</v-chip>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn outlined @click="moveAbout(memo)">詳細</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
   </v-app>
 </template>
@@ -155,7 +158,6 @@ export default {
     moveAbout(memo) {
       this.$router.push(`/${memo.memoId}`)
     },
-    
   },
 }
 </script>

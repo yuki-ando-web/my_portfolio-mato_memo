@@ -2,9 +2,9 @@ import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 const memoRef = db.collection('memos')
 const auth = firebase.auth()
-const user = auth.currentUser;
 let userName = 'ゲスト'
 let userId = ''
+const user = firebase.auth().currentUser;
 // const userConfilm  = 
 firebase.auth().onAuthStateChanged((user) => {
 if (user) {
@@ -15,16 +15,10 @@ if (user) {
 console.log(user)
 
 
-
 export const state = () => ({
   memos: [
-    // {title:'タイトル1',content:'コンテンツ１',id:'a'},
-    // {title:'タイトル2',content:'コンテンツ2',id:'b'},
+    
   ],
-  memo: {
-    title: '',
-    content: '',
-  },
 })
 
 export const mutations = {
@@ -67,9 +61,9 @@ export const mutations = {
   },
 }
 export const actions = {
-  login() {
-return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-
+async login() {
+await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+//stateに入れる処理
   },
   logout(){
     firebase.auth().signOut()
@@ -188,11 +182,12 @@ export const getters = {
   },
   getStateUserTag(state) {
     let stateUserTag = []
-   for(let i = 0; i < state.memos.length; i++) {
-     stateUserTag = stateUserTag.concat(state.memos[i].tag)
+    const userMemo = state.memos.filter((e)=> e.memoUserName === userName)
+   for(let i = 0; i < userMemo.length; i++) {
+     stateUserTag = stateUserTag.concat(userMemo[i].tag)
     }
     stateUserTag = Array.from(new Set(stateUserTag))
-    return stateUserTag.filter((e)=> e.memoUserName === userName)
+    return stateUserTag
   },
   getUserName(state) {
     // userConfilm()
