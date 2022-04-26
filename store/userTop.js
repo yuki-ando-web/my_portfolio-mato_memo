@@ -2,28 +2,22 @@ import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 const memoRef = db.collection('memos')
 const auth = firebase.auth()
-let userName = 'ゲスト'
-let userId = ''
-const user = firebase.auth().currentUser;
-// const userConfilm  = 
-firebase.auth().onAuthStateChanged((user) => {
-if (user) {
-    userName = user.displayName
-    userId = user.uid
-  } 
-});
-console.log(user)
-
-
 export const state = () => ({
-  memos: [
-    
-  ],
+  memos: [],
+  userName : "ゲスト",
+  userId : ""
 })
 
 export const mutations = {
-  a(state){
-    console.log(state.memos.filter((e) =>  e.tag.includes("ああ")))
+  setUser(state,user){
+    console.log(user.displayName)
+    state.userName = user.displayName
+    state.userId = user.uid
+  },
+  resetUser(state){
+    console.log("P")
+    state.userName = 'ゲスト'
+    state.userId = ''
   },
   changeMemo(state, payload) {
     console.log(payload)
@@ -61,30 +55,28 @@ export const mutations = {
   },
 }
 export const actions = {
-async login() {
-await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-//stateに入れる処理
+   login({commit}) {
+     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(result){
+      const user = result.user
+      commit('setUser',user)
+    })
+    
   },
-  logout(){
-    firebase.auth().signOut()
+  logout({commit}) {
+    firebase.auth().signOut().then(function(){
+      commit('resetUser')
+    })
   },
   newMemo({ commit }) {
-    
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          userName = user.displayName
-          userId = user.uid
-        } 
-      });
-     const memo = {
-        title: '',
-        content: '',
-        memoId: memoRef.doc().id,
-        created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        memoUserName: userName,
-        memoUserId: userId,
-        tag: [],
-      }
+    const memo = {
+      title: '',
+      content: '',
+      memoId: memoRef.doc().id,
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      memoUserName: state.userName,
+      memoUserId: state.userId,
+      tag: [],
+    }
     memoRef.add(memo)
     commit('newMemo', memo)
   },
@@ -170,33 +162,26 @@ export const getters = {
     return state.memos
   },
   getStateUserMemos(state) {
-    return state.memos.filter((e)=> e.memoUserName === userName)
+    return state.memos.filter((e) => e.memoUserName === state.userName)
   },
   getStateTag(state) {
     let stateTag = []
-   for(let i = 0; i < state.memos.length; i++) {
-     stateTag = stateTag.concat(state.memos[i].tag)
+    for (let i = 0; i < state.memos.length; i++) {
+      stateTag = stateTag.concat(state.memos[i].tag)
     }
     stateTag = Array.from(new Set(stateTag))
     return stateTag
   },
   getStateUserTag(state) {
     let stateUserTag = []
-    const userMemo = state.memos.filter((e)=> e.memoUserName === userName)
-   for(let i = 0; i < userMemo.length; i++) {
-     stateUserTag = stateUserTag.concat(userMemo[i].tag)
+    const userMemo = state.memos.filter((e) => e.memoUserName === state.userName)
+    for (let i = 0; i < userMemo.length; i++) {
+      stateUserTag = stateUserTag.concat(userMemo[i].tag)
     }
     stateUserTag = Array.from(new Set(stateUserTag))
     return stateUserTag
   },
   getUserName(state) {
-    // userConfilm()
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-          userName = user.displayName
-          userId = user.uid
-        } 
-      });
-      return userName
-  }
+    return state.userName
+  },
 }

@@ -1,6 +1,7 @@
 <template>
   <v-app dark>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar :clipped-left="clipped" fixed app class="overflow-x-auto"
+    >
       
       <v-toolbar-title v-text="title" />
       <v-toolbar-title  class="caption ml-4 mt-3">ユーザー:{{ userName }}</v-toolbar-title>
@@ -38,7 +39,7 @@ export default {
   name: 'DefaultLayout',
   data() {
     return {
-      clipped: false,
+      clipped: true,
       drawer: false,
       fixed: false,
       items: [
@@ -62,11 +63,11 @@ export default {
   methods: {
     async login() {
       await this.$store.dispatch('userTop/login')
-      this.$router.push('/userTop')
+      this.$router.push('/')
     },
     async logout() {
       await this.$store.dispatch('userTop/logout')
-      this.$router.push('/userTop')
+      this.$router.go('/')
     },
     moveIndex() {
       this.$router.push('/memoIndex')
