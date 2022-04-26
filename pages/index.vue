@@ -1,9 +1,7 @@
 <template>
   <div>
     <v-app>
-      <!-- サイドバー（検索、新規作成） -->
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-navigation-drawer app permanent bottom :width="navWidth">
+      <v-navigation-drawer app permanent :width="navWidth">
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -85,7 +83,7 @@
           </v-sheet>
           <!-- メモ -->
           <v-col>
-            <v-card height="100%" v-show="$vuetify.breakpoint.smAndUp">
+            <v-card height="100%" v-show="$vuetify.breakpoint.mdAndUp">
               <div>
                 <v-text-field
                   autofocus
@@ -165,7 +163,6 @@ export default {
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
-      
     }
   },
   computed: {
@@ -214,18 +211,7 @@ export default {
       }
       return undefined
     },
-    cardsWidth () {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return "100vh"
-          case 'sm': return "25vh"
-          case 'md': return "25vh"
-          case 'lg': return "25vh"
-          case 'xl': return "25vh"
-        }
-          return undefined;
-      },
   },
-  
 
   mounted() {
     if (this.stateUserMemos.length > 0) {
@@ -240,13 +226,16 @@ export default {
   },
   methods: {
     focusMemo(index) {
-      console.log(index)
+      console.log(this.$vuetify.breakpoint.name)
       if (this.displayUserMemos.length > 0) {
         this.memo.title = this.displayUserMemos[index].title
         this.memo.content = this.displayUserMemos[index].content
         this.memo.index = index
         this.memo.memoId = this.displayUserMemos[index].memoId
         this.userTag = this.displayUserMemos[index].tag
+        if (this.$vuetify.breakpoint.smAndDown === true) {
+          this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
+        }
       } else {
         this.memo.title = ''
         this.memo.content = ''
@@ -259,6 +248,7 @@ export default {
       this.$store.dispatch('userTop/newMemo')
       this.resetSearch()
       this.focusMemo(0)
+      console.log(this.$vuetify.breakpoint.mobile)
     },
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
@@ -315,9 +305,6 @@ export default {
       this.searchWordUserTop = ''
       this.searchTagUserTop = ''
     },
-    // changeDisplayTextArea() {
-    //   this.$vuetify.breakpoint.mobile = !this.$vuetify.breakpoint.mobile
-    // },
   },
 }
 </script>
