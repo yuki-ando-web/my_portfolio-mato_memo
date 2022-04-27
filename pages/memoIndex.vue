@@ -70,15 +70,30 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-
-      <!-- <div>{{stateMemos}}</div> -->
       <v-row>
-        <v-col cols="6"   v-for="(memo, index) in displayMemos"
-            v-bind:key="index">
-          <v-card
-           
-            height="184"
-          >
+        <v-dialog v-model="dialog" width="500">
+          <v-card>
+            <v-card-title class="text-h5 grey lighten-2">
+              {{ dialogMemo.title }}
+            </v-card-title>
+            <v-card-text>
+              {{ dialogMemo.content }}
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="dialog = false">
+                閉じる
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-col
+          cols="6"
+          v-for="(memo, index) in displayMemos"
+          v-bind:key="index"
+        >
+          <v-card height="184">
             <v-card-text>{{ memo.memoUserName }}</v-card-text>
             <v-card-title class="mt-n8">
               {{ memo.title.substr(0, 12) }}
@@ -91,7 +106,7 @@
                 <v-chip>{{ tag }}</v-chip>
               </div>
               <v-spacer></v-spacer>
-              <v-btn outlined @click="moveAbout(memo)">詳細</v-btn>
+              <v-btn outlined @click="openDialog(memo)">詳細</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -106,6 +121,13 @@ export default {
     return {
       searchWord: '',
       displayMemos: '',
+      dialog : false,
+      dialogMemo:{
+        title:'',
+        content:'',
+        tag:''
+
+      }
     }
   },
   mounted() {
@@ -155,9 +177,22 @@ export default {
       this.search = ''
       this.searc = ''
     },
-    moveAbout(memo) {
-      this.$router.push(`/${memo.memoId}`)
+    // moveAbout(memo) {
+    //   this.$router.push(`/${memo.memoId}`)
+    // },
+    openDialog(memo) {
+      this.dialog = true
+      this.dialogMemo = memo
+      console.log(this.dialogMemo)
     },
+    
   },
 }
 </script>
+<style>
+.v-dialog {
+  white-space: break-spaces;
+}
+
+</style>
+

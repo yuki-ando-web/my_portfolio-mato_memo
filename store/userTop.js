@@ -20,7 +20,6 @@ export const mutations = {
     state.userId = ''
   },
   changeMemo(state, payload) {
-    console.log(payload)
     state.memos[payload.index].title = payload.title
     state.memos[payload.index].content = payload.content
   },
@@ -67,7 +66,7 @@ export const actions = {
       commit('resetUser')
     })
   },
-  newMemo({ commit }) {
+  newMemo({ commit,state }) {
     const memo = {
       title: '',
       content: '',
@@ -82,7 +81,6 @@ export const actions = {
   },
 
   changeMemo({ commit }, payload) {
-    console.log(payload)
     memoRef
       .where('memoId', '==', payload.memoId)
       .get()

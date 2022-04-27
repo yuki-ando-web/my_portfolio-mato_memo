@@ -226,7 +226,6 @@ export default {
   },
   methods: {
     focusMemo(index) {
-      console.log(this.$vuetify.breakpoint.name)
       if (this.displayUserMemos.length > 0) {
         this.memo.title = this.displayUserMemos[index].title
         this.memo.content = this.displayUserMemos[index].content
@@ -242,14 +241,16 @@ export default {
         this.memo.index = ''
         this.memo.memoId = ''
         this.userTag = ''
+        if (this.$vuetify.breakpoint.smAndDown === true) {
+          this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
+        }
       }
     },
     newMemo() {
       this.$store.dispatch('userTop/newMemo')
       this.resetSearch()
       this.focusMemo(0)
-      console.log(this.$vuetify.breakpoint.mobile)
-    },
+},
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
