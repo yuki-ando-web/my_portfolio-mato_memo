@@ -46,10 +46,13 @@
                 <v-list-item
                   v-for="displayTag in displayTags"
                   :key="displayTag"
+                   @click="moveTag(displayTag)"
                 >
-                  <v-list-item-title @click="moveTag(displayTag)">{{
-                    displayTag
-                  }}</v-list-item-title>
+                  <v-list-item-content>
+                    <v-list-item-title 
+                      >{{ displayTag }}
+                    </v-list-item-title>
+                  </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
             </v-list-item-content>
@@ -123,7 +126,7 @@
                 </div>
               </v-row>
               <v-container>
-                <v-row no-gutters align-content="">
+                <v-row no-gutters>
                   <div v-for="(tag, index) in userTag" v-bind:key="index">
                     <v-chip
                       @click:close="deleteTag(tag)"
@@ -163,6 +166,7 @@ export default {
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
+      searchTagUserTop: '',
     }
   },
   computed: {
@@ -250,7 +254,7 @@ export default {
       this.$store.dispatch('userTop/newMemo')
       this.resetSearch()
       this.focusMemo(0)
-},
+    },
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
@@ -292,9 +296,12 @@ export default {
       this.focusMemo(0)
     },
     moveTag(displayTag) {
+      console.log(displayTag)
       this.displayUserMemos = this.stateUserMemos.filter((e) =>
         e.tag.includes(displayTag)
       )
+      this.focusMemo(0)
+      console.log(this.displayUserMemos)
     },
     filterTag(searchTagUserTop) {
       this.displayTags = this.stateUserTag.filter((e) =>
