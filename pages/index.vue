@@ -7,7 +7,6 @@
             <v-list-item-content>
               <v-list-item-title>
                 <v-chip v-on:click="newMemo">新規作成</v-chip>
-
                 <v-chip v-on:click="resetSearch"> 検索条件をクリア</v-chip>
               </v-list-item-title>
               <v-list-item-title> </v-list-item-title>
@@ -46,12 +45,10 @@
                 <v-list-item
                   v-for="displayTag in displayTags"
                   :key="displayTag"
-                   @click="moveTag(displayTag)"
+                  @click="moveTag(displayTag)"
                 >
                   <v-list-item-content>
-                    <v-list-item-title 
-                      >{{ displayTag }}
-                    </v-list-item-title>
+                    <v-list-item-title>{{ displayTag }} </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -70,7 +67,7 @@
           >
             <div v-for="(memo, index) in displayUserMemos" v-bind:key="index">
               <v-card height="25vh" v-on:click="focusMemo(index)">
-                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo"
+                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo(memo)"
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
@@ -95,8 +92,7 @@
                   full-width
                   placeholder="タイトル"
                   v-model="memo.title"
-                  id="id"
-                  @input="changeMemo"
+                  @change="changeMemo"
                 ></v-text-field>
                 <v-textarea
                   dense
@@ -258,11 +254,12 @@ export default {
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
-    deleteMemo() {
+    deleteMemo(memo) {
+      if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
       this.$store.dispatch('userTop/deleteMemo', this.memo)
       this.displayUserMemos = this.stateUserMemos
       this.focusMemo(0)
-    },
+    }},
     addTag() {
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
@@ -296,7 +293,6 @@ export default {
       this.focusMemo(0)
     },
     moveTag(displayTag) {
-      console.log(displayTag)
       this.displayUserMemos = this.stateUserMemos.filter((e) =>
         e.tag.includes(displayTag)
       )
