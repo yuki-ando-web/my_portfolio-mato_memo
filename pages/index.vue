@@ -244,8 +244,8 @@ export default {
     focusMemo(index) {
       console.log("i")
       if (this.displayUserMemos.length > 0) {
+        this.memo = this.displayUserMemos[index]
         this.userTag = this.displayUserMemos[index].tag
-        this.memo = this.stateUserMemos[index]
       } else {
         this.memo = ''
         this.userTag = ''
