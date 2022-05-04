@@ -65,9 +65,25 @@
             max-height="100vh"
             :width="cardsWidth"
           >
-            <div v-for="(memo, index) in displayUserMemos" v-bind:key="index">
-              <v-card height="25vh" v-on:click="focusMemo(index)">
-                <v-btn x-small fab depressed class="mr-auto" @click="deleteMemo(memo)"
+            <div
+              v-for="(memo, index) in displayUserMemos"
+              v-bind:key="index"
+              id="cards"
+            >
+              <v-card
+                height="25vh"
+                @click="
+                  focusMemo(index)
+                  moveMemo(index)
+                  isChose = !isChose
+                "
+              >
+                <v-btn
+                  x-small
+                  fab
+                  depressed
+                  class="mr-auto"
+                  @click="deleteMemo(memo)"
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
@@ -163,6 +179,7 @@ export default {
       displayUserMemos: '',
       displayTags: '',
       searchTagUserTop: '',
+      isChose: false,
     }
   },
   computed: {
@@ -220,6 +237,8 @@ export default {
       this.memo.index = 0
       this.memo.memoId = this.stateUserMemos[0].memoId
       this.userTag = this.stateUserMemos[0].tag
+    } else {
+      this.newMemo()
     }
     this.displayUserMemos = this.stateUserMemos
     this.displayTags = this.stateUserTag
@@ -232,20 +251,15 @@ export default {
         this.memo.index = index
         this.memo.memoId = this.displayUserMemos[index].memoId
         this.userTag = this.displayUserMemos[index].tag
-        if (this.$vuetify.breakpoint.smAndDown === true) {
-          this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
-        }
-      } else {
-        this.memo.title = ''
-        this.memo.content = ''
-        this.memo.index = ''
-        this.memo.memoId = ''
-        this.userTag = ''
-        if (this.$vuetify.breakpoint.smAndDown === true) {
-          this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
-        }
+      }
+      console.log(this.isChose)
+    },
+    moveMemo(index) {
+      if (this.$vuetify.breakpoint.smAndDown === true) {
+        this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
       }
     },
+
     newMemo() {
       this.$store.dispatch('userTop/newMemo')
       this.resetSearch()
@@ -256,10 +270,11 @@ export default {
     },
     deleteMemo(memo) {
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
-      this.$store.dispatch('userTop/deleteMemo', this.memo)
-      this.displayUserMemos = this.stateUserMemos
-      this.focusMemo(0)
-    }},
+        this.$store.dispatch('userTop/deleteMemo', this.memo)
+        this.displayUserMemos = this.stateUserMemos
+        this.focusMemo(0)
+      }
+    },
     addTag() {
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
@@ -312,3 +327,4 @@ export default {
   },
 }
 </script>
+

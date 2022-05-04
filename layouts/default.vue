@@ -1,17 +1,23 @@
 <template>
   <v-app dark>
-    <v-app-bar :clipped-left="clipped" fixed app class="overflow-x-auto"
-    >
-      
+    <v-app-bar :clipped-left="clipped" fixed app class="overflow-x-auto">
       <v-toolbar-title v-text="title" />
-      <v-toolbar-title  class="caption ml-4 mt-3">ユーザー:{{ userName }}</v-toolbar-title>
+      <v-toolbar-title class="caption ml-4 mt-3"
+        >ユーザー:{{ userName }}</v-toolbar-title
+      >
       <v-spacer></v-spacer>
-      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex">全てのユーザーのメモ</v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
+        >全てのユーザーのメモ</v-btn
+      >
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveUserTop"
         >{{ userName }}のメモ一覧&新規作成</v-btn
       >
-      <v-btn class="grey lighten-2 mr-1" depressed @click="logout"> ログアウト </v-btn>
-      <v-btn class="grey lighten-2 mr-1" depressed @click="login"> ログイン </v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed @click="logout">
+        ログアウト
+      </v-btn>
+      <v-btn class="grey lighten-2 mr-1" depressed @click="login">
+        ログイン
+      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
