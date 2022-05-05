@@ -5,10 +5,12 @@
         <v-list>
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title>
+              <v-row>
+                <v-col>
                 <v-chip v-on:click="newMemo">新規作成</v-chip>
                 <v-chip v-on:click="resetSearch"> 検索条件をクリア</v-chip>
-              </v-list-item-title>
+                </v-col>
+              </v-row>
               <v-list-item-title> </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -83,7 +85,7 @@
                   fab
                   depressed
                   class="mr-auto"
-                  @click="deleteMemo(memo)"
+                  @click="deleteMemo({memo, index})"
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
@@ -91,7 +93,7 @@
                 </v-card-subtitle>
                 <v-card-text>
                   <div class="text-caption mt-n1 ml-n2 mb-n2">
-                    {{ memo.content.substr(0, 100) }}
+                    {{ memo.content.substr(0, 80) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -162,7 +164,6 @@
 </template>
 
 <script>
-// import firebase from 'firebase'
 export default {
   data() {
     return {
@@ -216,9 +217,9 @@ export default {
     navWidth() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
-          return '25vh'
+          return '192'
         case 'sm':
-          return '25vh'
+          return '192'
         case 'md':
           return '256'
         case 'lg':
@@ -251,8 +252,13 @@ export default {
         this.memo.index = index
         this.memo.memoId = this.displayUserMemos[index].memoId
         this.userTag = this.displayUserMemos[index].tag
+      }else{
+        this.memo.title = ''
+        this.memo.content = ''
+        this.memo.index = ''
+        this.memo.memoId = ''
+        this.userTag = ''
       }
-      console.log(this.isChose)
     },
     moveMemo(index) {
       if (this.$vuetify.breakpoint.smAndDown === true) {
@@ -268,7 +274,8 @@ export default {
     changeMemo() {
       this.$store.dispatch('userTop/changeMemo', this.memo)
     },
-    deleteMemo(memo) {
+    deleteMemo({memo,index}) {
+      this.focusMemo(index)
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
         this.$store.dispatch('userTop/deleteMemo', this.memo)
         this.displayUserMemos = this.stateUserMemos
