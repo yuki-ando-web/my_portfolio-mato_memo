@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app>
-      <v-navigation-drawer app permanent :width="navWidth">
+      <v-navigation-drawer app permanent :width="bkPoint.navWidth">
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -65,7 +65,7 @@
           <v-sheet
             class="overflow-y-auto"
             max-height="100vh"
-            :width="cardsWidth"
+            :width="bkPoint.cardsWidth"
           >
             <div
               v-for="(memo, index) in displayUserMemos"
@@ -89,11 +89,11 @@
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
-                  {{ memo.title.substr(0, 12) }}
+                  {{ memo.title.substr(0, titleCount) }}
                 </v-card-subtitle>
                 <v-card-text>
                   <div class="text-caption mt-n1 ml-n2 mb-n2">
-                    {{ memo.content.substr(0, 80) }}
+                    {{ memo.content.substr(0, bkPoint.contentCount) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -199,38 +199,59 @@ export default {
         return this.$store.getters['userTop/getStateUserTag']
       },
     },
-    cardsWidth() {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return '100vh'
-        case 'sm':
-          return '25vh'
-        case 'md':
-          return '25vh'
-        case 'lg':
-          return '25vh'
-        case 'xl':
-          return '25vh'
-      }
-      return undefined
+    bkPoint() {
+      const point = {cardsWidth:'', navWidth: '',contentCount:''}
+       switch (this.$vuetify.breakpoint.name) {
+          case 'xs':
+          point.cardsWidth = '100vh'
+          point.navWidth = '192'
+          point.contentCount = '65'
+          break
+          case 'sm':
+          point.cardsWidth = '25vh'
+          point.navWidth = '192'
+          point.contentCount = '65'
+          break
+          case 'md':
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
+          case 'lg':
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
+          case 'xl':
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
+          
+       }
+       return point
     },
-    navWidth() {
+    
+    titleCount() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
-          return '192'
+          return '11'
         case 'sm':
-          return '192'
+          return '11'
         case 'md':
-          return '256'
+          return '12'
         case 'lg':
-          return '256'
+          return '12'
         case 'xl':
-          return '256'
+          return '12'
       }
       return undefined
     },
   },
+created(){
+  console.log(this.bkPoint)
 
+},
   mounted() {
     if (this.stateUserMemos.length > 0) {
       this.memo.title = this.stateUserMemos[0].title
