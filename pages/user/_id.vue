@@ -9,8 +9,8 @@
                   dense
                   full-width
                   placeholder="タイトル"
-                  v-model="detailUserMemo.title"
-                  id="id"
+                  :value="detailUserMemo.title"
+                  id="title"
                   @input="changeMemo"
                 ></v-text-field>
                 <v-textarea
@@ -18,8 +18,8 @@
                   rows="20"
                   full-width
                   placeholder="コンテンツ"
-                  id="id"
-                  v-model="detailUserMemo.content"
+                  id="content"
+                  :value="detailUserMemo.content"
                   @input="changeMemo"
                 ></v-textarea>
               </div>
@@ -89,6 +89,9 @@ export default {
           (e) => e.memoId === this.$route.params.id
         )
       },
+      // set(value) {
+      //    this.$store.dispatch('userTop/changeMemo', value)
+      // }
     },
     userName: {
       get() {
@@ -104,12 +107,16 @@ export default {
   },
   
 
-  mounted() {
-  
-  },
   methods: {
     changeMemo() {
-      this.$store.dispatch('userTop/changeMemo', this.memo)
+      console.log(document.getElementById('title').value)
+      console.log(this.detailUserMemo)
+      const updateData = {
+        id:this.$route.params.id,
+        title:document.getElementById('title').value,
+        content:document.getElementById('content').value
+      }
+      this.$store.dispatch('userTop/changeMemo2', updateData)
     },
     deleteMemo() {
       this.$store.dispatch('userTop/deleteMemo', this.memo)
