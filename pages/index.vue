@@ -67,10 +67,7 @@
             max-height="100vh"
             :width="bkPoint.cardsWidth"
           >
-            <div
-              v-for="(memo, index) in displayUserMemos"
-              :key="index"
-            >
+            <div v-for="(memo, index) in displayUserMemos" :key="index">
               <v-card
                 height="25vh"
                 @click="
@@ -100,13 +97,11 @@
           </v-sheet>
           <!-- メモ -->
           <v-col>
-            <v-card 
-            v-show="$vuetify.breakpoint.mdAndUp"
-            height="100%" 
-            >
+            <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <div>
                 <v-text-field
-                  v-model="memo.title"
+                id="title"
+                  :value="memo.title"
                   autofocus
                   auto-grow
                   dense
@@ -115,8 +110,8 @@
                   @change="changeMemo"
                 ></v-text-field>
                 <v-textarea
-                  id="id"
-                  v-model="memo.content"
+                  id="content"
+                  :value="memo.content"
                   dense
                   rows="20"
                   full-width
@@ -236,11 +231,12 @@ export default {
   created() {},
   mounted() {
     if (this.stateUserMemos.length > 0) {
-      this.memo.title = this.stateUserMemos[0].title
-      this.memo.content = this.stateUserMemos[0].content
-      this.memo.index = 0
-      this.memo.memoId = this.stateUserMemos[0].memoId
-      this.userTag = this.stateUserMemos[0].tag
+      // this.memo.title = this.stateUserMemos[0].title
+      // this.memo.content = this.stateUserMemos[0].content
+      // this.memo.index = 0
+      // this.memo.memoId = this.stateUserMemos[0].memoId
+      // this.userTag = this.stateUserMemos[0].tag
+      this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
     }
@@ -275,7 +271,12 @@ export default {
       this.focusMemo(0)
     },
     changeMemo() {
-      this.$store.dispatch('userTop/changeMemo', this.memo)
+      const updateData = {
+        id: this.memo.memoId,
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+      }
+      this.$store.dispatch('userTop/changeMemo2', updateData)
     },
     deleteMemo({ memo, index }) {
       this.focusMemo(index)
