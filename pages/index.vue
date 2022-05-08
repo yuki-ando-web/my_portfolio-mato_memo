@@ -24,7 +24,7 @@
                 dense
                 append-outer-icon="mdi-magnify"
                 @click:append-outer="searchWordMemo(searchWordUserTop)"
-                @:keydown.enter="searchWordMemo(searchWordUserTop)"
+                @keydown.enter="searchWordMemo(searchWordUserTop)"
               ></v-text-field>
             </v-list-item-content>
           </v-list-item>
@@ -37,9 +37,9 @@
                 placeholder="タグ入力"
                 dense
                 append-outer-icon="mdi-magnify"
-                @:click:append-outer="searchTagMemo(searchTagUserTop)"
-                @:keydown.enter="searchTagMemo(searchTagUserTop)"
-                @:input="filterTag(searchTagUserTop)"
+                @click:append-outer="searchTagMemo(searchTagUserTop)"
+                @keydown.enter="searchTagMemo(searchTagUserTop)"
+                @input="filterTag(searchTagUserTop)"
               ></v-text-field>
 
               <v-list-item-title>タグ一覧</v-list-item-title>
@@ -231,11 +231,7 @@ export default {
   created() {},
   mounted() {
     if (this.stateUserMemos.length > 0) {
-      // this.memo.title = this.stateUserMemos[0].title
-      // this.memo.content = this.stateUserMemos[0].content
-      // this.memo.index = 0
-      // this.memo.memoId = this.stateUserMemos[0].memoId
-      // this.userTag = this.stateUserMemos[0].tag
+      this.userTag = this.stateUserMemos[0].tag
       this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
@@ -246,11 +242,8 @@ export default {
   methods: {
     focusMemo(index) {
       if (this.displayUserMemos.length > 0) {
-        this.memo.title = this.displayUserMemos[index].title
-        this.memo.content = this.displayUserMemos[index].content
-        this.memo.index = index
-        this.memo.memoId = this.displayUserMemos[index].memoId
         this.userTag = this.displayUserMemos[index].tag
+        this.memo = this.stateUserMemos[index]
       } else {
         this.memo.title = ''
         this.memo.content = ''
@@ -304,6 +297,7 @@ export default {
       this.displayTags = this.stateUserTag
     },
     searchWordMemo() {
+      console.log("e")
       const upSword = this.searchWordUserTop.toUpperCase()
       this.displayUserMemos = this.stateUserMemos.filter(
         (e) =>
