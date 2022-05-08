@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-app>
-      <v-navigation-drawer app permanent :width="navWidth">
+      <v-navigation-drawer app permanent :width="bkPoint.navWidth">
         <v-list>
           <v-list-item>
             <v-list-item-content>
               <v-row>
                 <v-col>
-                <v-chip v-on:click="newMemo">新規作成</v-chip>
-                <v-chip v-on:click="resetSearch"> 検索条件をクリア</v-chip>
+                  <v-chip @click="newMemo">新規作成</v-chip>
+                  <v-chip @click="resetSearch"> 検索条件をクリア</v-chip>
                 </v-col>
               </v-row>
               <v-list-item-title> </v-list-item-title>
@@ -24,7 +24,7 @@
                 dense
                 append-outer-icon="mdi-magnify"
                 @click:append-outer="searchWordMemo(searchWordUserTop)"
-                v-on:keydown.enter="searchWordMemo(searchWordUserTop)"
+                @keydown.enter="searchWordMemo(searchWordUserTop)"
               ></v-text-field>
             </v-list-item-content>
           </v-list-item>
@@ -33,13 +33,13 @@
               <v-list-item-title> タグ検索 </v-list-item-title>
 
               <v-text-field
+                v-model="searchTagUserTop"
                 placeholder="タグ入力"
                 dense
-                v-model="searchTagUserTop"
                 append-outer-icon="mdi-magnify"
-                v-on:click:append-outer="searchTagMemo(searchTagUserTop)"
-                v-on:keydown.enter="searchTagMemo(searchTagUserTop)"
-                v-on:input="filterTag(searchTagUserTop)"
+                @click:append-outer="searchTagMemo(searchTagUserTop)"
+                @keydown.enter="searchTagMemo(searchTagUserTop)"
+                @input="filterTag(searchTagUserTop)"
               ></v-text-field>
 
               <v-list-item-title>タグ一覧</v-list-item-title>
@@ -65,13 +65,9 @@
           <v-sheet
             class="overflow-y-auto"
             max-height="100vh"
-            :width="cardsWidth"
+            :width="bkPoint.cardsWidth"
           >
-            <div
-              v-for="(memo, index) in displayUserMemos"
-              v-bind:key="index"
-              id="cards"
-            >
+            <div v-for="(memo, index) in displayUserMemos" :key="index">
               <v-card
                 height="25vh"
                 @click="
@@ -85,15 +81,15 @@
                   fab
                   depressed
                   class="mr-auto"
-                  @click="deleteMemo({memo, index})"
+                  @click="deleteMemo({ memo, index })"
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
-                  {{ memo.title.substr(0, 12) }}
+                  {{ memo.title.substr(0, 11) }}
                 </v-card-subtitle>
                 <v-card-text>
                   <div class="text-caption mt-n1 ml-n2 mb-n2">
-                    {{ memo.content.substr(0, 80) }}
+                    {{ memo.content.substr(0, bkPoint.contentCount) }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -101,24 +97,25 @@
           </v-sheet>
           <!-- メモ -->
           <v-col>
-            <v-card height="100%" v-show="$vuetify.breakpoint.mdAndUp">
+            <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <div>
                 <v-text-field
+                id="title"
+                  :value="memo.title"
                   autofocus
                   auto-grow
                   dense
                   full-width
                   placeholder="タイトル"
-                  v-model="memo.title"
                   @change="changeMemo"
                 ></v-text-field>
                 <v-textarea
+                  id="content"
+                  :value="memo.content"
                   dense
                   rows="20"
                   full-width
                   placeholder="コンテンツ"
-                  id="id"
-                  v-model="memo.content"
                   @input="changeMemo"
                 ></v-textarea>
               </div>
@@ -129,9 +126,9 @@
                   <v-col class="mt-n6 pt-n6 text-caption">
                     <v-card-actions>
                       <v-text-field
+                        v-model="inputTag"
                         text-caption
                         placeholder="タグを入力"
-                        v-model="inputTag"
                       ></v-text-field>
 
                       <v-btn depressed @click="addTag">追加</v-btn>
@@ -141,14 +138,14 @@
               </v-row>
               <v-container>
                 <v-row no-gutters>
-                  <div v-for="(tag, index) in userTag" v-bind:key="index">
+                  <div v-for="(tag, index) in userTag" :key="index">
                     <v-chip
-                      @click:close="deleteTag(tag)"
                       close
                       filter
                       ripple
                       tag
                       small
+                      @click:close="deleteTag(tag)"
                     >
                       {{ tag }}
                     </v-chip>
@@ -199,45 +196,43 @@ export default {
         return this.$store.getters['userTop/getStateUserTag']
       },
     },
-    cardsWidth() {
+    bkPoint() {
+      const point = { cardsWidth: '', navWidth: '', contentCount: '' }
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
-          return '100vh'
+          point.cardsWidth = '100vh'
+          point.navWidth = '192'
+          point.contentCount = '65'
+          break
         case 'sm':
-          return '25vh'
+          point.cardsWidth = '25vh'
+          point.navWidth = '192'
+          point.contentCount = '65'
+          break
         case 'md':
-          return '25vh'
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
         case 'lg':
-          return '25vh'
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
         case 'xl':
-          return '25vh'
+          point.cardsWidth = '25vh'
+          point.navWidth = '256'
+          point.contentCount = '80'
+          break
       }
-      return undefined
-    },
-    navWidth() {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return '192'
-        case 'sm':
-          return '192'
-        case 'md':
-          return '256'
-        case 'lg':
-          return '256'
-        case 'xl':
-          return '256'
-      }
-      return undefined
+      return point
     },
   },
-
+  created() {},
   mounted() {
     if (this.stateUserMemos.length > 0) {
-      this.memo.title = this.stateUserMemos[0].title
-      this.memo.content = this.stateUserMemos[0].content
-      this.memo.index = 0
-      this.memo.memoId = this.stateUserMemos[0].memoId
       this.userTag = this.stateUserMemos[0].tag
+      this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
     }
@@ -247,12 +242,9 @@ export default {
   methods: {
     focusMemo(index) {
       if (this.displayUserMemos.length > 0) {
-        this.memo.title = this.displayUserMemos[index].title
-        this.memo.content = this.displayUserMemos[index].content
-        this.memo.index = index
-        this.memo.memoId = this.displayUserMemos[index].memoId
         this.userTag = this.displayUserMemos[index].tag
-      }else{
+        this.memo = this.stateUserMemos[index]
+      } else {
         this.memo.title = ''
         this.memo.content = ''
         this.memo.index = ''
@@ -272,9 +264,14 @@ export default {
       this.focusMemo(0)
     },
     changeMemo() {
-      this.$store.dispatch('userTop/changeMemo', this.memo)
+      const updateData = {
+        id: this.memo.memoId,
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+      }
+      this.$store.dispatch('userTop/changeMemo2', updateData)
     },
-    deleteMemo({memo,index}) {
+    deleteMemo({ memo, index }) {
       this.focusMemo(index)
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
         this.$store.dispatch('userTop/deleteMemo', this.memo)
@@ -300,6 +297,7 @@ export default {
       this.displayTags = this.stateUserTag
     },
     searchWordMemo() {
+      console.log("e")
       const upSword = this.searchWordUserTop.toUpperCase()
       this.displayUserMemos = this.stateUserMemos.filter(
         (e) =>
@@ -319,7 +317,6 @@ export default {
         e.tag.includes(displayTag)
       )
       this.focusMemo(0)
-      console.log(this.displayUserMemos)
     },
     filterTag(searchTagUserTop) {
       this.displayTags = this.stateUserTag.filter((e) =>

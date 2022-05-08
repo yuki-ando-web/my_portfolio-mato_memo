@@ -10,12 +10,10 @@ export const state = () => ({
 
 export const mutations = {
   setUser(state,user){
-    console.log(user.displayName)
     state.userName = user.displayName
     state.userId = user.uid
   },
   resetUser(state){
-    console.log("P")
     state.userName = 'ゲスト'
     state.userId = ''
   },
@@ -23,9 +21,15 @@ export const mutations = {
     state.memos[payload.index].title = payload.title
     state.memos[payload.index].content = payload.content
   },
+  changeMemo2(state, payload) {
+    console.log(payload)
+    const memo = state.memos.find((e) => e.memoId === payload.id)
+    console.log(memo)
+    memo.title = payload.title
+    memo.content = payload.content
+  },
 
   newMemo(state, payload) {
-    console.log(payload)
     state.memos.unshift(payload)
   },
   deleteMemo(state, payload) {
@@ -46,7 +50,6 @@ export const mutations = {
   },
   deleteTag(state, payload) {
     const deleteTagMemo = state.memos.find((e) => e.memoId === payload.memoId)
-    console.log(deleteTagMemo)
     const deleteTagIndex = deleteTagMemo.tag.findIndex(
       (e) => e.tag === payload.removeTag
     )
@@ -81,10 +84,12 @@ export const actions = {
   },
 
   changeMemo({ commit }, payload) {
+    console.log(payload.updateData)
     memoRef
-      .where('memoId', '==', payload.memoId)
-      .get()
-      .then((snapshot) => {
+    .where('memoId', '==', payload.memoId)
+    .get()
+    .then((snapshot) => {
+      console.log(payload)
         snapshot.forEach((doc) => {
           const updateMemo = {
             title: payload.title,
@@ -95,8 +100,23 @@ export const actions = {
       })
     commit('changeMemo', payload)
   },
+  changeMemo2({ commit }, updateData) {
+    console.log(updateData)
+    memoRef
+    .where('memoId', '==', updateData.id)
+    .get()
+    .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          const updateMemo = {
+            title: updateData.title,
+            content: updateData.content,
+          }
+          memoRef.doc(doc.id).update(updateMemo)
+        })
+      })
+    commit('changeMemo2', updateData)
+  },
   deleteMemo({ commit }, payload) {
-    console.log(payload)
     memoRef
       .where('memoId', '==', payload.memoId)
       .get()
@@ -108,7 +128,6 @@ export const actions = {
     commit('deleteMemo', payload)
   },
   addTag({ commit }, payload) {
-    console.log(payload)
     memoRef
       .where('memoId', '==', payload.memoId)
       .get()
@@ -122,14 +141,12 @@ export const actions = {
     commit('addTag', payload)
   },
   deleteTag({ commit }, payload) {
-    console.log(payload)
     return new Promise((resolve, reject) => {
       memoRef
         .where('tag', 'array-contains', payload.removeTag)
         .get()
         .then((snapshot) => {
           snapshot.forEach((doc) => {
-            console.log(`${doc.id}: ${doc.data()}`)
             memoRef
               .doc(doc.id)
               .update({
