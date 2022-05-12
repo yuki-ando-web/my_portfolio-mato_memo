@@ -81,7 +81,7 @@
                   fab
                   depressed
                   class="mr-auto"
-                  @click="deleteMemo({ memo, index })"
+                  @click.stop="deleteMemo({ memo, index })"
                   >X</v-btn
                 >
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
@@ -100,14 +100,14 @@
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <div>
                 <v-text-field
-                id="title"
+                  id="title"
                   :value="memo.title"
                   autofocus
                   auto-grow
                   dense
                   full-width
                   placeholder="タイトル"
-                  @change="changeMemo"
+                  @input="changeMemo"
                 ></v-text-field>
                 <v-textarea
                   id="content"
@@ -130,8 +130,9 @@
                         text-caption
                         placeholder="タグを入力"
                       ></v-text-field>
-
-                      <v-btn depressed @click="addTag">追加</v-btn>
+                      <v-btn depressed @click="addTag" @keydown.enter="addTag"
+                        >追加</v-btn
+                      >
                     </v-card-actions>
                   </v-col>
                 </div>
@@ -231,8 +232,8 @@ export default {
   created() {},
   mounted() {
     if (this.stateUserMemos.length > 0) {
-      this.userTag = this.stateUserMemos[0].tag
       this.memo = this.stateUserMemos[0]
+      this.userTag = this.stateUserMemos[0].tag
     } else {
       this.newMemo()
     }
@@ -241,14 +242,12 @@ export default {
   },
   methods: {
     focusMemo(index) {
+      console.log("i")
       if (this.displayUserMemos.length > 0) {
         this.userTag = this.displayUserMemos[index].tag
         this.memo = this.stateUserMemos[index]
       } else {
-        this.memo.title = ''
-        this.memo.content = ''
-        this.memo.index = ''
-        this.memo.memoId = ''
+        this.memo = ''
         this.userTag = ''
       }
     },
@@ -269,7 +268,7 @@ export default {
         title: document.getElementById('title').value,
         content: document.getElementById('content').value,
       }
-      this.$store.dispatch('userTop/changeMemo2', updateData)
+      this.$store.dispatch('userTop/changeMemo', updateData)
     },
     deleteMemo({ memo, index }) {
       this.focusMemo(index)
@@ -297,7 +296,6 @@ export default {
       this.displayTags = this.stateUserTag
     },
     searchWordMemo() {
-      console.log("e")
       const upSword = this.searchWordUserTop.toUpperCase()
       this.displayUserMemos = this.stateUserMemos.filter(
         (e) =>

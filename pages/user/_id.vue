@@ -89,9 +89,6 @@ export default {
           (e) => e.memoId === this.$route.params.id
         )
       },
-      // set(value) {
-      //    this.$store.dispatch('userTop/changeMemo', value)
-      // }
     },
     userName: {
       get() {
@@ -116,7 +113,7 @@ export default {
         title:document.getElementById('title').value,
         content:document.getElementById('content').value
       }
-      this.$store.dispatch('userTop/changeMemo2', updateData)
+      this.$store.dispatch('userTop/changeMemo', updateData)
     },
     deleteMemo() {
       this.$store.dispatch('userTop/deleteMemo', this.memo)
