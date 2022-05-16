@@ -17,11 +17,11 @@ export const mutations = {
     state.userName = 'ゲスト'
     state.userId = ''
   },
+  // changeMemo(state, payload) {
+  //   state.memos[payload.index].title = payload.title
+  //   state.memos[payload.index].content = payload.content
+  // },
   changeMemo(state, payload) {
-    state.memos[payload.index].title = payload.title
-    state.memos[payload.index].content = payload.content
-  },
-  changeMemo2(state, payload) {
     console.log(payload)
     const memo = state.memos.find((e) => e.memoId === payload.id)
     console.log(memo)
@@ -83,24 +83,24 @@ export const actions = {
     commit('newMemo', memo)
   },
 
-  changeMemo({ commit }, payload) {
-    console.log(payload.updateData)
-    memoRef
-    .where('memoId', '==', payload.memoId)
-    .get()
-    .then((snapshot) => {
-      console.log(payload)
-        snapshot.forEach((doc) => {
-          const updateMemo = {
-            title: payload.title,
-            content: payload.content,
-          }
-          memoRef.doc(doc.id).update(updateMemo)
-        })
-      })
-    commit('changeMemo', payload)
-  },
-  changeMemo2({ commit }, updateData) {
+  // changeMemo({ commit }, payload) {
+  //   console.log(payload.updateData)
+  //   memoRef
+  //   .where('memoId', '==', payload.memoId)
+  //   .get()
+  //   .then((snapshot) => {
+  //     console.log(payload)
+  //       snapshot.forEach((doc) => {
+  //         const updateMemo = {
+  //           title: payload.title,
+  //           content: payload.content,
+  //         }
+  //         memoRef.doc(doc.id).update(updateMemo)
+  //       })
+  //     })
+  //   commit('changeMemo', payload)
+  // },
+  changeMemo({ commit }, updateData) {
     console.log(updateData)
     memoRef
     .where('memoId', '==', updateData.id)
@@ -114,7 +114,7 @@ export const actions = {
           memoRef.doc(doc.id).update(updateMemo)
         })
       })
-    commit('changeMemo2', updateData)
+    commit('changeMemo', updateData)
   },
   deleteMemo({ commit }, payload) {
     memoRef
@@ -156,7 +156,6 @@ export const actions = {
               })
               .then((ref) => {
                 resolve(true)
-                console.log()
               })
               .catch((error) => {
                 console.error('An error occurred in editUser(): ', error)

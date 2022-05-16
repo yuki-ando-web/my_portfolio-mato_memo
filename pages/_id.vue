@@ -7,12 +7,12 @@
             <th class="text-h6">{{ detailMemo.title }}</th>
           </tr>
         </thead>
-        <tbody >
+        <tbody>
           <tr>
-            <td  class="text-body-1"  >{{ detailMemo.content }}</td>
+            <td class="text-body-1">{{ detailMemo.content }}</td>
           </tr>
-          <tr >
-            <div class="text-body-1" v-for="tag in detailMemo.tag" :key="tag">
+          <tr>
+            <div v-for="tag in detailMemo.tag" :key="tag" class="text-body-1">
               <v-chip>
                 {{ tag }}
               </v-chip>
@@ -35,11 +35,8 @@ export default {
         return this.$store.getters['userTop/getStateMemos'].find(
           (e) => e.memoId === this.$route.params.id
         )
-      }
+      },
     },
-  },
-  mounted() {
-    console.log(this.detailMemo.title)
   },
 }
 </script>

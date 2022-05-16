@@ -6,7 +6,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip v-on:click="resetSearch"> 検索条件をクリア </v-chip>
+                <v-chip @click="resetSearch"> 検索条件をクリア </v-chip>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -20,7 +20,7 @@
                   dense
                   append-outer-icon="mdi-magnify"
                   @click:append-outer="searchWordMemo(searchWord)"
-                  v-on:keydown.enter="searchWordMemo(searchWord)"
+                  @keydown.enter="searchWordMemo(searchWord)"
                 ></v-text-field>
               </v-form>
             </v-list-item-content>
@@ -30,13 +30,13 @@
               <v-list-item-title> タグ検索 </v-list-item-title>
               <v-form>
                 <v-text-field
+                  v-model="searchTag"
                   placeholder="タグ入力"
                   dense
-                  v-model="searchTag"
                   append-outer-icon="mdi-magnify"
-                  v-on:click:append-outer="searchTagMemo(searchTag)"
-                  v-on:keydown.enter="searchTagMemo(searchTag)"
-                  v-on:input="filterTag(searchTag)"
+                  @click:append-outer="searchTagMemo(searchTag)"
+                  @keydown.enter="searchTagMemo(searchTag)"
+                  @input="filterTag(searchTag)"
                 ></v-text-field>
               </v-form>
               <v-list-item-title>タグ一覧</v-list-item-title>
@@ -89,17 +89,17 @@
           </v-card>
         </v-dialog>
         <v-col
-          cols="6"
           v-for="(memo, index) in displayMemos"
-          v-bind:key="index"
+          :key="index"
+          cols="12" sm="6" md="6" lg="6" xl="6"
         >
           <v-card height="184">
             <v-card-text>{{ memo.memoUserName }}</v-card-text>
             <v-card-title class="mt-n8">
-              {{ memo.title.substr(0, 12) }}
+              {{ memo.title.substr(0, bkPoint.titleCount) }}
             </v-card-title>
             <v-card-text>
-              {{ memo.content.substr(0, 24) }}
+              {{ memo.content.substr(0, bkPoint.contentCount) }}
             </v-card-text>
             <v-card-actions>
               <div v-for="tag in memo.tag" :key="tag">
@@ -121,18 +121,13 @@ export default {
     return {
       searchWord: '',
       displayMemos: '',
-      dialog : false,
-      dialogMemo:{
-        title:'',
-        content:'',
-        tag:''
-
-      }
+      dialog: false,
+      dialogMemo: {
+        title: '',
+        content: '',
+        tag: '',
+      },
     }
-  },
-  mounted() {
-    this.displayMemos = this.stateMemos
-    this.displayTags = this.stateTag
   },
   computed: {
     stateMemos: {
@@ -150,6 +145,40 @@ export default {
         return this.$store.getters['userTop/getUserName']
       },
     },
+    bkPoint() {
+      const point = { titleCount:'', contentCount: '' }
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          
+          point.titleCount = '10'
+          point.contentCount = '15'
+          break
+        case 'sm':
+          
+          point.titleCount = '16'
+          point.contentCount = '25'
+          break
+        case 'md':
+          
+          point.titleCount = '16'
+          point.contentCount = '25'
+          break
+        case 'lg':
+          
+          point.titleCount = '16'
+          point.contentCount = '25'
+          break
+        case 'xl':  
+          point.titleCount = '16'
+          point.contentCount = '25'
+          break
+      }
+      return point
+    },
+  },
+  mounted() {
+    this.displayMemos = this.stateMemos
+    this.displayTags = this.stateTag
   },
   methods: {
     searchWordMemo() {
@@ -185,7 +214,6 @@ export default {
       this.dialogMemo = memo
       console.log(this.dialogMemo)
     },
-    
   },
 }
 </script>
@@ -193,6 +221,5 @@ export default {
 .v-dialog {
   white-space: break-spaces;
 }
-
 </style>
 
