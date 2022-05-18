@@ -9,9 +9,11 @@ export const state = () => ({
 })
 
 export const mutations = {
-  setUser(state, user) {
+  async setUser(state, user) {
     state.userName = user.displayName
     state.userId = user.uid
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    location.reload()
   },
   resetUser(state) {
     state.userName = 'ゲスト'
@@ -82,7 +84,7 @@ export const actions = {
       memoUserName: state.userName,
       memoUserId: state.userId,
       tag: [],
-      picture:[]
+      picture: [],
     }
     memoRef.add(memo)
     commit('newMemo', memo)
@@ -154,7 +156,10 @@ export const actions = {
     })
   },
   uploadPicture({ commit }, payload) {
-    firebase.storage().ref(`images/${payload.picture.name}`).put(payload.picture)
+    firebase
+      .storage()
+      .ref(`images/${payload.picture.name}`)
+      .put(payload.picture)
 
     // console.log(payload)
     // memoRef
