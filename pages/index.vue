@@ -134,6 +134,10 @@
                         >追加</v-btn
                       >
                     </v-card-actions>
+                    <v-file-input
+                      v-model="picture"
+                      @change="uploadFile"
+                    ></v-file-input>
                   </v-col>
                 </div>
               </v-row>
@@ -178,7 +182,7 @@ export default {
       displayUserMemos: '',
       displayTags: '',
       searchTagUserTop: '',
-      isChose: false,
+      picture: '',
     }
   },
   computed: {
@@ -242,7 +246,7 @@ export default {
   },
   methods: {
     focusMemo(index) {
-      console.log("i")
+      console.log('i')
       if (this.displayUserMemos.length > 0) {
         this.memo = this.displayUserMemos[index]
         this.userTag = this.displayUserMemos[index].tag
@@ -294,6 +298,13 @@ export default {
         })
       }
       this.displayTags = this.stateUserTag
+    },
+    uploadFile() {
+      this.$store.dispatch('userTop/uploadPicture', {
+        picture: this.picture,
+        memoId: this.memo.memoId,
+      })
+      console.log(this.picture.name)
     },
     searchWordMemo() {
       const upSword = this.searchWordUserTop.toUpperCase()
