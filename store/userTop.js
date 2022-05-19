@@ -55,6 +55,7 @@ export const mutations = {
   },
   uploadPicture(state,payload){
     const upMemo = state.memos.find((e) => e.memoId === payload.memoId)
+    console.log(upMemo)
     upMemo.picture.push(payload.url)
   }
 }

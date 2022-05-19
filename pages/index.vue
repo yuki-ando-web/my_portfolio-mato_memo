@@ -134,10 +134,6 @@
                         >追加</v-btn
                       >
                     </v-card-actions>
-                    <v-file-input
-                      v-model="picture"
-                      @change="uploadFile"
-                    ></v-file-input>
                   </v-col>
                 </div>
               </v-row>
@@ -154,10 +150,27 @@
                     >
                       {{ tag }}
                     </v-chip>
-                    </div>
+                  </div>
+                </v-row>
+                <v-file-input
+                  v-model="inputPicture"
+                  placeholder="画像を添付"
+                  @change="uploadFile"
+                ></v-file-input>
+                <v-row no-gutters>
                   <div v-for="(picture, index) in memo.picture" :key="index">
-              <v-img :src="picture"></v-img>
-                     
+                    <v-dialog v-model="dialog">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-img
+                          :src="picture"
+                          height="100"
+                          width="200"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-img>
+                      </template>
+                      <v-img :src="picture"></v-img>
+                    </v-dialog>
                   </div>
                 </v-row>
               </v-container>
@@ -178,8 +191,9 @@ export default {
         content: '',
         index: '0',
         memoId: '',
-        tag:[],
-        picture:[]
+        tag: [],
+        picture: [],
+        dialog: false,
       },
       inputTag: '',
       pictures: '',
@@ -187,7 +201,7 @@ export default {
       displayUserMemos: '',
       displayTags: '',
       searchTagUserTop: '',
-      picture: '',
+      inputPicture: '',
     }
   },
   computed: {
@@ -242,7 +256,6 @@ export default {
   mounted() {
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
-      this.Pictuers = this.stateUserMemos[0].picture
     } else {
       this.newMemo()
     }
@@ -255,7 +268,6 @@ export default {
         this.memo = this.displayUserMemos[index]
       } else {
         this.memo = ''
-        this.Pictuers = ''
       }
     },
     moveMemo(index) {
@@ -304,10 +316,10 @@ export default {
     },
     uploadFile() {
       this.$store.dispatch('userTop/uploadPicture', {
-        picture: this.picture,
+        picture: this.inputPicture,
         memoId: this.memo.memoId,
       })
-      console.log(this.picture.name)
+      this.inputPicture = ''
     },
     searchWordMemo() {
       const upSword = this.searchWordUserTop.toUpperCase()
