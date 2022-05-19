@@ -143,7 +143,7 @@
               </v-row>
               <v-container>
                 <v-row no-gutters>
-                  <div v-for="(tag, index) in userTag" :key="index">
+                  <div v-for="(tag, index) in memo.tag" :key="index">
                     <v-chip
                       close
                       filter
@@ -154,6 +154,10 @@
                     >
                       {{ tag }}
                     </v-chip>
+                    </div>
+                  <div v-for="(picture, index) in memo.picture" :key="index">
+              <v-img :src="picture"></v-img>
+                     
                   </div>
                 </v-row>
               </v-container>
@@ -174,10 +178,11 @@ export default {
         content: '',
         index: '0',
         memoId: '',
+        tag:[],
+        picture:[]
       },
-      tag: '',
       inputTag: '',
-      userTag: '',
+      pictures: '',
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
@@ -237,7 +242,7 @@ export default {
   mounted() {
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
-      this.userTag = this.stateUserMemos[0].tag
+      this.Pictuers = this.stateUserMemos[0].picture
     } else {
       this.newMemo()
     }
@@ -246,13 +251,11 @@ export default {
   },
   methods: {
     focusMemo(index) {
-      console.log('i')
       if (this.displayUserMemos.length > 0) {
         this.memo = this.displayUserMemos[index]
-        this.userTag = this.displayUserMemos[index].tag
       } else {
         this.memo = ''
-        this.userTag = ''
+        this.Pictuers = ''
       }
     },
     moveMemo(index) {

@@ -19,12 +19,8 @@ export const mutations = {
     state.userName = 'ゲスト'
     state.userId = ''
   },
-  // changeMemo(state, payload) {
-  //   state.memos[payload.index].title = payload.title
-  //   state.memos[payload.index].content = payload.content
-  // },
+
   changeMemo(state, payload) {
-    console.log(payload)
     const memo = state.memos.find((e) => e.memoId === payload.id)
     console.log(memo)
     memo.title = payload.title
@@ -57,6 +53,10 @@ export const mutations = {
     )
     deleteTagMemo.tag.splice(deleteTagIndex, 1)
   },
+  uploadPicture(state,payload){
+    const upMemo = state.memos.find((e) => e.memoId === payload.memoId)
+    upMemo.picture.push(payload.url)
+  }
 }
 export const actions = {
   login({ commit }) {
@@ -90,7 +90,6 @@ export const actions = {
     commit('newMemo', memo)
   },
   changeMemo({ commit }, updateData) {
-    console.log(updateData)
     memoRef
       .where('memoId', '==', updateData.id)
       .get()
@@ -139,9 +138,7 @@ export const actions = {
             memoRef
               .doc(doc.id)
               .update({
-                picture: firebase.firestore.FieldValue.arrayRemove(
-                  payload.picture
-                ),
+                tag: firebase.firestore.FieldValue.arrayRemove(payload.tag),
               })
               .then((ref) => {
                 resolve(true)
@@ -160,19 +157,24 @@ export const actions = {
       .storage()
       .ref(`images/${payload.picture.name}`)
       .put(payload.picture)
+      .then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((pictureUrl) => {
+          memoRef
+            .where('memoId', '==', payload.memoId)
+            .get()
+            .then((snapshot) => {
+              console.log(pictureUrl)
+              snapshot.forEach((doc) => {
+                memoRef.doc(doc.id).update({
+                  picture: firebase.firestore.FieldValue.arrayUnion(pictureUrl),
+                  
+                })
+              })
+            })
+            commit('uploadPicture', {memoId:payload.memoId,url:pictureUrl})
+        })
+      })
 
-    // console.log(payload)
-    // memoRef
-    //   .where('memoId', '==', payload.memoId)
-    //   .get()
-    //   .then((snapshot) => {
-    //     snapshot.forEach((doc) => {
-    //       memoRef.doc(doc.id).update({
-    //         picture: firebase.firestore.FieldValue.arrayUnion(payload.picture),
-    //       })
-    //     })
-    //   })
-    // commit('addTag', payload)
   },
 }
 

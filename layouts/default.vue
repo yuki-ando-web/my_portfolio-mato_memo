@@ -2,10 +2,7 @@
   <v-app dark>
     <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
       <v-spacer></v-spacer>
-      <!-- <v-toolbar-title v-text="title" />
-      <v-toolbar-title class="caption ml-4 mt-3"
-        >ユーザー:{{ userName }}</v-toolbar-title
-      > -->
+      
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全てのユーザーのメモ</v-btn
       >
