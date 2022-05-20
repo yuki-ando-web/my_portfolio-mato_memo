@@ -206,9 +206,8 @@ export default {
       this.search = ''
       this.searc = ''
     },
-    // moveAbout(memo) {
-    //   this.$router.push(`/${memo.memoId}`)
-    // },
+    
+    
     openDialog(memo) {
       this.dialog = true
       this.dialogMemo = memo

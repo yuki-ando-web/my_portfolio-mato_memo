@@ -1,6 +1,8 @@
 <template>
   <div>
     <v-app>
+      <!-- サイドバー 新規作成や検索機能を持つ-->
+      <!-- 幅は画面サイズによって変わる -->
       <v-navigation-drawer app permanent :width="bkPoint.navWidth">
         <v-list>
           <v-list-item>
@@ -17,7 +19,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> ワード検索 </v-list-item-title>
-
+<!-- ワード入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
                 v-model="searchWordUserTop"
                 placeholder="検索ワードを入力"
@@ -31,7 +33,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> タグ検索 </v-list-item-title>
-
+<!-- タグ入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
                 v-model="searchTagUserTop"
                 placeholder="タグ入力"
@@ -41,7 +43,7 @@
                 @keydown.enter="searchTagMemo(searchTagUserTop)"
                 @input="filterTag(searchTagUserTop)"
               ></v-text-field>
-
+<!-- タグ一覧、クリックすることでタグを含むメモを表示する機能あり -->
               <v-list-item-title>タグ一覧</v-list-item-title>
               <v-list-item-group>
                 <v-list-item
@@ -73,7 +75,6 @@
                 @click="
                   focusMemo(index)
                   moveMemo(index)
-                  isChose = !isChose
                 "
               >
                 <v-btn
@@ -95,7 +96,7 @@
               </v-card>
             </div>
           </v-sheet>
-          <!-- メモ -->
+          <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <div>
