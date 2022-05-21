@@ -159,7 +159,7 @@
                 ></v-file-input>
                 <v-row no-gutters>
                   <div v-for="(picture, index) in memo.picture" :key="index">
-                    <v-dialog v-model="dialog">
+                    <v-dialog :value="memo.dialog">
                       <template v-slot:activator="{ on, attrs }">
                         <v-img
                           :src="picture"
@@ -169,7 +169,8 @@
                           v-on="on"
                         ></v-img>
                       </template>
-                      <v-img :src="picture"></v-img>
+                      <v-img :src="picture">
+                      </v-img>
                     </v-dialog>
                   </div>
                 </v-row>

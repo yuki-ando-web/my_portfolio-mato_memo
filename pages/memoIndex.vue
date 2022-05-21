@@ -80,6 +80,21 @@
               {{ dialogMemo.content }}
             </v-card-text>
             <v-divider></v-divider>
+            <v-col cols="12">
+
+            <div v-for="(picture, index) in dialogMemo.picture" :key="index">
+            <v-dialog :value="dialogMemo.pictureDialog">
+              <template v-slot:activator="{ on, attrs }">
+                <v-img
+                  :src="picture"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-img>
+              </template>
+              <v-img :src="picture"></v-img>
+            </v-dialog>
+            </div>
+            </v-col>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" text @click="dialog = false">
@@ -91,7 +106,11 @@
         <v-col
           v-for="(memo, index) in displayMemos"
           :key="index"
-          cols="12" sm="6" md="6" lg="6" xl="6"
+          cols="12"
+          sm="6"
+          md="6"
+          lg="6"
+          xl="6"
         >
           <v-card height="184">
             <v-card-text>{{ memo.memoUserName }}</v-card-text>
@@ -126,6 +145,8 @@ export default {
         title: '',
         content: '',
         tag: '',
+        picture:[],
+        pictureDialog: false,
       },
     }
   },
@@ -146,29 +167,25 @@ export default {
       },
     },
     bkPoint() {
-      const point = { titleCount:'', contentCount: '' }
+      const point = { titleCount: '', contentCount: '' }
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
-          
           point.titleCount = '10'
           point.contentCount = '15'
           break
         case 'sm':
-          
           point.titleCount = '16'
           point.contentCount = '25'
           break
         case 'md':
-          
           point.titleCount = '16'
           point.contentCount = '25'
           break
         case 'lg':
-          
           point.titleCount = '16'
           point.contentCount = '25'
           break
-        case 'xl':  
+        case 'xl':
           point.titleCount = '16'
           point.contentCount = '25'
           break
@@ -206,13 +223,10 @@ export default {
       this.search = ''
       this.searc = ''
     },
-    // moveAbout(memo) {
-    //   this.$router.push(`/${memo.memoId}`)
-    // },
+
     openDialog(memo) {
       this.dialog = true
       this.dialogMemo = memo
-      console.log(this.dialogMemo)
     },
   },
 }
