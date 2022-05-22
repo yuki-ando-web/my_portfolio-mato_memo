@@ -158,20 +158,19 @@
                   placeholder="画像を添付"
                   @change="uploadFile"
                 ></v-file-input>
-                <v-row no-gutters>
+                <v-row no-gutters justify="center">
                   <div v-for="(picture, index) in memo.picture" :key="index">
                     <v-dialog :value="memo.dialog">
                       <template v-slot:activator="{ on, attrs }">
                         <v-img
                           :src="picture"
-                          height="100"
-                          width="200"
+                          height="12vh"
+                          width="20vh"
                           v-bind="attrs"
                           v-on="on"
                         ></v-img>
                       </template>
-                      <v-img :src="picture">
-                      </v-img>
+                      <v-img :src="picture"> </v-img>
                     </v-dialog>
                   </div>
                 </v-row>
@@ -203,7 +202,7 @@ export default {
       displayUserMemos: '',
       displayTags: '',
       searchTagUserTop: '',
-      inputPicture: '',
+      inputPicture: [],
     }
   },
   computed: {
@@ -277,6 +276,8 @@ export default {
       } else {
         this.memo = ''
       }
+      this.inputTag = ''
+      this.inputPicture = []
     },
     // モバイル画面の時に編集ページに移動する
     moveMemo(index) {
@@ -333,7 +334,8 @@ export default {
         picture: this.inputPicture,
         memoId: this.memo.memoId,
       })
-      this.inputPicture = ''
+      console.log(this.inputPicture)
+      this.inputPicture = []
     },
     // ワード検索機能。ワードを含むメモの配列を表示させる
     searchWordMemo() {
@@ -352,7 +354,7 @@ export default {
       )
       this.focusMemo(0)
     },
-  // タグ一覧のタグをクリックするとそのタグが含まれるメモを表示する
+    // タグ一覧のタグをクリックするとそのタグが含まれるメモを表示する
     moveTag(displayTag) {
       this.displayUserMemos = this.stateUserMemos.filter((e) =>
         e.tag.includes(displayTag)

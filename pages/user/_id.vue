@@ -55,11 +55,12 @@
               </v-chip>
             </div>
             <v-file-input
-              v-model="inpPicture"
+              v-model="inputPicture"
               placeholder="画像を添付"
               @change="uploadFile"
             ></v-file-input>
-            <v-row no-gutters>
+            <v-row no-gutters  justify="center" >
+
               <div
                 v-for="(picture, index) in detailUserMemo.picture"
                 :key="index"
@@ -68,10 +69,9 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-img
                       :src="picture"
-                      height="100"
-                      width="200"
                       v-bind="attrs"
                       v-on="on"
+                      width=48vh
                     ></v-img>
                   </template>
                   <v-img :src="picture"></v-img>
@@ -93,7 +93,7 @@ export default {
      
       tag: [],
       inputTag: '',
-      inputPicture: '',
+      inputPicture: [],
       userTag: '',
       searchWordUserTop: '',
       displayUserMemos: '',
@@ -159,7 +159,7 @@ export default {
         picture: this.inputPicture,
         memoId: this.detailUserMemo.memoId,
       })
-      this.inputPicture = ''
+      this.inputPicture = []
     },
   },
 }
