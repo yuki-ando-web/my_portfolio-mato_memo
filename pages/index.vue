@@ -19,7 +19,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> ワード検索 </v-list-item-title>
-<!-- ワード入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
+              <!-- ワード入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
                 v-model="searchWordUserTop"
                 placeholder="検索ワードを入力"
@@ -33,7 +33,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> タグ検索 </v-list-item-title>
-<!-- タグ入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
+              <!-- タグ入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
                 v-model="searchTagUserTop"
                 placeholder="タグ入力"
@@ -43,7 +43,7 @@
                 @keydown.enter="searchTagMemo(searchTagUserTop)"
                 @input="filterTag(searchTagUserTop)"
               ></v-text-field>
-<!-- タグ一覧、クリックすることでタグを含むメモを表示する機能あり -->
+              <!-- タグ一覧、クリックすることでタグを含むメモを表示する機能あり -->
               <v-list-item-title>タグ一覧</v-list-item-title>
               <v-list-item-group>
                 <v-list-item
@@ -206,21 +206,25 @@ export default {
     }
   },
   computed: {
+    // 現在のユーザーのメモを全て取得
     stateUserMemos: {
       get() {
         return this.$store.getters['userTop/getStateUserMemos']
       },
     },
+    // 現在のユーザーの名前を取得
     userName: {
       get() {
         return this.$store.getters['userTop/getUserName']
       },
     },
+    // 現在のユーザーが使っている全てのタグを取得
     stateUserTag: {
       get() {
         return this.$store.getters['userTop/getStateUserTag']
       },
     },
+    // 画面サイズによってサイドバーのサイズ、一覧表示されたカードのサイズと文字数が変わる
     bkPoint() {
       const point = { cardsWidth: '', navWidth: '', contentCount: '' }
       switch (this.$vuetify.breakpoint.name) {
@@ -253,7 +257,7 @@ export default {
       return point
     },
   },
-  created() {},
+  // 最初は先頭のメモの情報が表示される
   mounted() {
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
@@ -264,24 +268,28 @@ export default {
     this.displayTags = this.stateUserTag
   },
   methods: {
+    // 一覧のメモをクリックした時にそのメモの情報を表示する
     focusMemo(index) {
       if (this.displayUserMemos.length > 0) {
         this.memo = this.displayUserMemos[index]
+        // メモがない場合は空白になる
       } else {
         this.memo = ''
       }
     },
+    // モバイル画面の時に編集ページに移動する
     moveMemo(index) {
       if (this.$vuetify.breakpoint.smAndDown === true) {
         this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
       }
     },
-
+    // メモ新規作成機能。検索条件がクリアになり、新規に作ったメモの情報が取得される
     newMemo() {
       this.$store.dispatch('userTop/newMemo')
       this.resetSearch()
       this.focusMemo(0)
     },
+    // メモ編集機能。入力欄が変わるたびに発火。valueを引数にする。
     changeMemo() {
       const updateData = {
         id: this.memo.memoId,
@@ -290,6 +298,7 @@ export default {
       }
       this.$store.dispatch('userTop/changeMemo', updateData)
     },
+    //  メモ削除機能。確認モーダルが表示された後発動。検索条件がクリアになり、先頭のメモの情報が取得される
     deleteMemo({ memo, index }) {
       this.focusMemo(index)
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
@@ -298,6 +307,7 @@ export default {
         this.focusMemo(0)
       }
     },
+    // タグ追加機能 タグ入力欄の値が引数
     addTag() {
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
@@ -306,6 +316,7 @@ export default {
       this.inputTag = ''
       this.displayTags = this.stateUserTag
     },
+    // タグ削除機能 確認モーダルが表示された後発動
     deleteTag(tag) {
       if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
         this.$store.dispatch('userTop/deleteTag', {
@@ -315,6 +326,7 @@ export default {
       }
       this.displayTags = this.stateUserTag
     },
+    //  画像追加機能
     uploadFile() {
       this.$store.dispatch('userTop/uploadPicture', {
         picture: this.inputPicture,
@@ -322,6 +334,7 @@ export default {
       })
       this.inputPicture = ''
     },
+    // ワード検索機能。ワードを含むメモの配列を表示させる
     searchWordMemo() {
       const upSword = this.searchWordUserTop.toUpperCase()
       this.displayUserMemos = this.stateUserMemos.filter(
@@ -331,23 +344,27 @@ export default {
       )
       this.focusMemo(0)
     },
+    // ワード検索機能。ワードを含むメモの配列を表示させる
     searchTagMemo() {
       this.displayUserMemos = this.stateUserMemos.filter((e) =>
         e.tag.includes(this.searchTagUserTop)
       )
       this.focusMemo(0)
     },
+  // タグ一覧のタグをクリックするとそのタグが含まれるメモを表示する
     moveTag(displayTag) {
       this.displayUserMemos = this.stateUserMemos.filter((e) =>
         e.tag.includes(displayTag)
       )
       this.focusMemo(0)
     },
+    // タグ検索欄に入力した値が含まれるタグのみをタグ一覧に表示する
     filterTag(searchTagUserTop) {
       this.displayTags = this.stateUserTag.filter((e) =>
         e.includes(searchTagUserTop)
       )
     },
+    // 検索条件をクリアにする。新規作成や削除した時にも発動ï
     resetSearch() {
       this.displayUserMemos = this.stateUserMemos
       this.searchWordUserTop = ''
