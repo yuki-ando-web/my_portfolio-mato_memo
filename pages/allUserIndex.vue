@@ -223,7 +223,6 @@ export default {
       this.search = ''
       this.searc = ''
     },
-
     openDialog(memo) {
       this.dialog = true
       this.dialogMemo = memo
