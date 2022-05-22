@@ -55,7 +55,7 @@
               </v-chip>
             </div>
             <v-file-input
-              v-model="inputPicture"
+              v-model="inpPicture"
               placeholder="画像を添付"
               @change="uploadFile"
             ></v-file-input>
