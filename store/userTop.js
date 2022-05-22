@@ -4,25 +4,23 @@ const memoRef = db.collection('memos')
 const auth = firebase.auth()
 export const state = () => ({
   memos: [],
-  userName : "ゲスト",
-  userId : ""
+  userName: 'ゲスト',
+  userId: '',
 })
 
 export const mutations = {
-  setUser(state,user){
+  async setUser(state, user) {
     state.userName = user.displayName
     state.userId = user.uid
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    location.reload()
   },
-  resetUser(state){
+  resetUser(state) {
     state.userName = 'ゲスト'
     state.userId = ''
   },
-  // changeMemo(state, payload) {
-  //   state.memos[payload.index].title = payload.title
-  //   state.memos[payload.index].content = payload.content
-  // },
+
   changeMemo(state, payload) {
-    console.log(payload)
     const memo = state.memos.find((e) => e.memoId === payload.id)
     console.log(memo)
     memo.title = payload.title
@@ -55,21 +53,30 @@ export const mutations = {
     )
     deleteTagMemo.tag.splice(deleteTagIndex, 1)
   },
+  uploadPicture(state,payload){
+    const upMemo = state.memos.find((e) => e.memoId === payload.memoId)
+    console.log(upMemo)
+    upMemo.picture.push(payload.url)
+  }
 }
 export const actions = {
-   login({commit}) {
-     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(result){
-      const user = result.user
-      commit('setUser',user)
-    })
-    
+  login({ commit }) {
+    auth
+      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(function (result) {
+        const user = result.user
+        commit('setUser', user)
+      })
   },
-  logout({commit}) {
-    firebase.auth().signOut().then(function(){
-      commit('resetUser')
-    })
+  logout({ commit }) {
+    firebase
+      .auth()
+      .signOut()
+      .then(function () {
+        commit('resetUser')
+      })
   },
-  newMemo({ commit,state }) {
+  newMemo({ commit, state }) {
     const memo = {
       title: '',
       content: '',
@@ -78,34 +85,16 @@ export const actions = {
       memoUserName: state.userName,
       memoUserId: state.userId,
       tag: [],
+      picture: [],
     }
     memoRef.add(memo)
     commit('newMemo', memo)
   },
-
-  // changeMemo({ commit }, payload) {
-  //   console.log(payload.updateData)
-  //   memoRef
-  //   .where('memoId', '==', payload.memoId)
-  //   .get()
-  //   .then((snapshot) => {
-  //     console.log(payload)
-  //       snapshot.forEach((doc) => {
-  //         const updateMemo = {
-  //           title: payload.title,
-  //           content: payload.content,
-  //         }
-  //         memoRef.doc(doc.id).update(updateMemo)
-  //       })
-  //     })
-  //   commit('changeMemo', payload)
-  // },
   changeMemo({ commit }, updateData) {
-    console.log(updateData)
     memoRef
-    .where('memoId', '==', updateData.id)
-    .get()
-    .then((snapshot) => {
+      .where('memoId', '==', updateData.id)
+      .get()
+      .then((snapshot) => {
         snapshot.forEach((doc) => {
           const updateMemo = {
             title: updateData.title,
@@ -150,9 +139,7 @@ export const actions = {
             memoRef
               .doc(doc.id)
               .update({
-                tag: firebase.firestore.FieldValue.arrayRemove(
-                  payload.removeTag
-                ),
+                tag: firebase.firestore.FieldValue.arrayRemove(payload.tag),
               })
               .then((ref) => {
                 resolve(true)
@@ -166,8 +153,29 @@ export const actions = {
       commit('deleteTag', payload)
     })
   },
-  b() {
-    console.log(firebase.auth().currentUser.displayName)
+  uploadPicture({ commit }, payload) {
+    firebase
+      .storage()
+      .ref(`images/${payload.picture.name}`)
+      .put(payload.picture)
+      .then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((pictureUrl) => {
+          memoRef
+            .where('memoId', '==', payload.memoId)
+            .get()
+            .then((snapshot) => {
+              console.log(pictureUrl)
+              snapshot.forEach((doc) => {
+                memoRef.doc(doc.id).update({
+                  picture: firebase.firestore.FieldValue.arrayUnion(pictureUrl),
+                  
+                })
+              })
+            })
+            commit('uploadPicture', {memoId:payload.memoId,url:pictureUrl})
+        })
+      })
+
   },
 }
 
@@ -188,7 +196,9 @@ export const getters = {
   },
   getStateUserTag(state) {
     let stateUserTag = []
-    const userMemo = state.memos.filter((e) => e.memoUserName === state.userName)
+    const userMemo = state.memos.filter(
+      (e) => e.memoUserName === state.userName
+    )
     for (let i = 0; i < userMemo.length; i++) {
       stateUserTag = stateUserTag.concat(userMemo[i].tag)
     }

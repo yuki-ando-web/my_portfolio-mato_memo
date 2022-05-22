@@ -139,7 +139,7 @@
               </v-row>
               <v-container>
                 <v-row no-gutters>
-                  <div v-for="(tag, index) in userTag" :key="index">
+                  <div v-for="(tag, index) in memo.tag" :key="index">
                     <v-chip
                       close
                       filter
@@ -150,6 +150,28 @@
                     >
                       {{ tag }}
                     </v-chip>
+                  </div>
+                </v-row>
+                <v-file-input
+                  v-model="inputPicture"
+                  placeholder="画像を添付"
+                  @change="uploadFile"
+                ></v-file-input>
+                <v-row no-gutters>
+                  <div v-for="(picture, index) in memo.picture" :key="index">
+                    <v-dialog :value="memo.dialog">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-img
+                          :src="picture"
+                          height="100"
+                          width="200"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-img>
+                      </template>
+                      <v-img :src="picture">
+                      </v-img>
+                    </v-dialog>
                   </div>
                 </v-row>
               </v-container>
@@ -170,15 +192,17 @@ export default {
         content: '',
         index: '0',
         memoId: '',
+        tag: [],
+        picture: [],
+        dialog: false,
       },
-      tag: '',
       inputTag: '',
-      userTag: '',
+      pictures: '',
       searchWordUserTop: '',
       displayUserMemos: '',
       displayTags: '',
       searchTagUserTop: '',
-      isChose: false,
+      inputPicture: '',
     }
   },
   computed: {
@@ -233,7 +257,6 @@ export default {
   mounted() {
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
-      this.userTag = this.stateUserMemos[0].tag
     } else {
       this.newMemo()
     }
@@ -242,13 +265,10 @@ export default {
   },
   methods: {
     focusMemo(index) {
-      console.log("i")
       if (this.displayUserMemos.length > 0) {
-        this.userTag = this.displayUserMemos[index].tag
-        this.memo = this.stateUserMemos[index]
+        this.memo = this.displayUserMemos[index]
       } else {
         this.memo = ''
-        this.userTag = ''
       }
     },
     moveMemo(index) {
@@ -294,6 +314,13 @@ export default {
         })
       }
       this.displayTags = this.stateUserTag
+    },
+    uploadFile() {
+      this.$store.dispatch('userTop/uploadPicture', {
+        picture: this.inputPicture,
+        memoId: this.memo.memoId,
+      })
+      this.inputPicture = ''
     },
     searchWordMemo() {
       const upSword = this.searchWordUserTop.toUpperCase()

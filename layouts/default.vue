@@ -1,11 +1,8 @@
 <template>
   <v-app dark>
-    <v-app-bar :clipped-left="clipped"  app class="overflow-x-auto">
+    <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
       <v-spacer></v-spacer>
-      <!-- <v-toolbar-title v-text="title" />
-      <v-toolbar-title class="caption ml-4 mt-3"
-        >ユーザー:{{ userName }}</v-toolbar-title
-      > -->
+      
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全てのユーザーのメモ</v-btn
       >
@@ -56,10 +53,16 @@ export default {
       title: 'memo_app',
     }
   },
+  computed: {
+    userName: {
+      get() {
+        return this.$store.getters['userTop/getUserName']
+      },
+    },
+  },
   methods: {
-    async login() {
-      await this.$store.dispatch('userTop/login')
-      this.$router.push('/')
+    login() {
+      this.$store.dispatch('userTop/login')
     },
     async logout() {
       await this.$store.dispatch('userTop/logout')
@@ -70,13 +73,6 @@ export default {
     },
     moveUserTop() {
       this.$router.push('/')
-    },
-  },
-  computed: {
-    userName: {
-      get() {
-        return this.$store.getters['userTop/getUserName']
-      },
     },
   },
 }
