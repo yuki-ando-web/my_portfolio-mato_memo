@@ -86,12 +86,16 @@
             <v-dialog :value="dialogMemo.pictureDialog">
               <template v-slot:activator="{ on, attrs }">
                 <v-img
-                  :src="picture"
+                  :src="picture.url"
                   v-bind="attrs"
                   v-on="on"
                 ></v-img>
               </template>
-              <v-img :src="picture"></v-img>
+              <v-card>
+
+              <v-img :src="picture.url"></v-img>
+              <div>{{picture.name}}</div>
+              </v-card>
             </v-dialog>
             </div>
             </v-col>
