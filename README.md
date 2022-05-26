@@ -32,8 +32,10 @@
 
 ## 使用技術
 Nuxt.js 2.15.8
-vuetify 2.6.1
-firebase 8.1.0
+
+Vuetify 2.6.1
+
+Firebase 8.1.0
 
 
 
