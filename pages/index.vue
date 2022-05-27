@@ -61,6 +61,7 @@
         </v-list>
       </v-navigation-drawer>
 
+        <v-card v-show="(displayUserMemos.length < 1)" width="116" outlined disabled>メモは０件です </v-card>
       <v-container>
         <!-- メモ一覧 -->
         <v-row>
@@ -98,7 +99,12 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
-            <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
+            <v-card
+              v-show="
+                $vuetify.breakpoint.mdAndUp && displayUserMemos.length > 0
+              "
+              height="100%"
+            >
               <div>
                 <v-text-field
                   id="title"
@@ -269,7 +275,6 @@ export default {
       }
       return point
     },
-    dotted_line: {},
   },
   // 最初は先頭のメモの情報が表示される
   mounted() {
