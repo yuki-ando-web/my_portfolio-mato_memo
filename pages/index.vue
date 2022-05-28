@@ -153,24 +153,37 @@
                     </v-chip>
                   </div>
                 </v-row>
-                <v-file-input
-                  v-model="inputPicture"
-                  placeholder="画像を添付"
-                  @change="uploadFile"
-                ></v-file-input>
+                <v-row no-gutters>
+                  <v-file-input
+                    v-model="inputPicture"
+                    placeholder="画像を添付"
+                  ></v-file-input>
+                  <v-btn depressed @click="uploadFile">アップロード</v-btn>
+                </v-row>
                 <v-row no-gutters justify="center">
                   <div v-for="(picture, index) in memo.picture" :key="index">
                     <v-dialog :value="memo.dialog">
                       <template v-slot:activator="{ on, attrs }">
                         <v-img
-                          :src="picture"
+                          :src="picture.url"
                           height="12vh"
                           width="20vh"
                           v-bind="attrs"
                           v-on="on"
                         ></v-img>
+                        <v-btn
+                          color="grey lighten-1"
+                          icon="mdi-trash-can-outline"
+                          right
+                          @click="deletePicture(picture)"
+                        >
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
                       </template>
-                      <v-img :src="picture"> </v-img>
+                      <v-card>
+                        <v-img :src="picture.url"></v-img>
+                        <div>{{ picture.name }}</div>
+                      </v-card>
                     </v-dialog>
                   </div>
                 </v-row>
@@ -256,6 +269,7 @@ export default {
       }
       return point
     },
+    dotted_line: {},
   },
   // 最初は先頭のメモの情報が表示される
   mounted() {
@@ -330,12 +344,21 @@ export default {
     },
     //  画像追加機能
     uploadFile() {
-      this.$store.dispatch('userTop/uploadPicture', {
-        picture: this.inputPicture,
-        memoId: this.memo.memoId,
-      })
-      console.log(this.inputPicture)
-      this.inputPicture = []
+      if (this.inputPicture.length !== 0) {
+        this.$store.dispatch('userTop/uploadPicture', {
+          picture: this.inputPicture,
+          memoId: this.memo.memoId,
+        })
+        this.inputPicture = []
+      }
+    },
+    deletePicture(picture) {
+      if (window.confirm(`${picture.name}写真を削除してよろしいですか。`)) {
+        this.$store.dispatch('userTop/deletePicture', {
+          removePicture: picture,
+          memoId: this.memo.memoId,
+        })
+      }
     },
     // ワード検索機能。ワードを含むメモの配列を表示させる
     searchWordMemo() {
