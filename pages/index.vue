@@ -61,7 +61,6 @@
         </v-list>
       </v-navigation-drawer>
 
-        <v-card v-show="(displayUserMemos.length < 1)" width="116" outlined disabled>メモは０件です </v-card>
       <v-container>
         <!-- メモ一覧 -->
         <v-row>
@@ -99,12 +98,7 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
-            <v-card
-              v-show="
-                $vuetify.breakpoint.mdAndUp && displayUserMemos.length > 0
-              "
-              height="100%"
-            >
+            <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <div>
                 <v-text-field
                   id="title"
@@ -128,20 +122,18 @@
               </div>
               <v-divider class="my-2"></v-divider>
 
-              <v-row>
+              <v-row no-gutters>
                 <div>
-                  <v-col class="mt-n6 pt-n6 text-caption">
-                    <v-card-actions>
-                      <v-text-field
-                        v-model="inputTag"
-                        text-caption
-                        placeholder="タグを入力"
-                      ></v-text-field>
-                      <v-btn depressed @click="addTag" @keydown.enter="addTag"
-                        >追加</v-btn
-                      >
-                    </v-card-actions>
-                  </v-col>
+                  <v-card-actions>
+                    <v-text-field
+                      v-model="inputTag"
+                      text-caption
+                      placeholder="タグを入力"
+                    ></v-text-field>
+                    <v-btn depressed @click="addTag" @keydown.enter="addTag"
+                      >追加</v-btn
+                    >
+                  </v-card-actions>
                 </div>
               </v-row>
               <v-container>
@@ -159,12 +151,14 @@
                     </v-chip>
                   </div>
                 </v-row>
-                <v-row no-gutters>
+                <v-row>
                   <v-file-input
                     v-model="inputPicture"
                     placeholder="画像を添付"
                   ></v-file-input>
-                  <v-btn depressed @click="uploadFile">アップロード</v-btn>
+                  <v-btn class="mt-4" depressed @click="uploadFile"
+                    >アップロード</v-btn
+                  >
                 </v-row>
                 <v-row no-gutters justify="center">
                   <div v-for="(picture, index) in memo.picture" :key="index">
@@ -275,6 +269,7 @@ export default {
       }
       return point
     },
+    dotted_line: {},
   },
   // 最初は先頭のメモの情報が表示される
   mounted() {
