@@ -13,44 +13,42 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> ユーザー検索 </v-list-item-title>
-              <v-form>
-                <v-text-field
-                  placeholder="ユーザー名を入力"
-                  dense
-                  append-outer-icon="mdi-magnify"
-                ></v-text-field>
-              </v-form>
+
+              <v-text-field
+                v-model="searchUser"
+                placeholder="ユーザー名を入力"
+                dense
+                append-outer-icon="mdi-magnify"
+                @click:append-outer="searchUserMemo(searchUser)"
+                @keydown.enter="searchUserMemo(searchUser)"
+              ></v-text-field>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> ワード検索 </v-list-item-title>
-              <v-form>
-                <v-text-field
-                  v-model="searchWord"
-                  placeholder="検索ワードを入力"
-                  dense
-                  append-outer-icon="mdi-magnify"
-                  @click:append-outer="searchWordMemo(searchWord)"
-                  @keydown.enter="searchWordMemo(searchWord)"
-                ></v-text-field>
-              </v-form>
+              <v-text-field
+                v-model="searchWord"
+                placeholder="検索ワードを入力"
+                dense
+                append-outer-icon="mdi-magnify"
+                @click:append-outer="searchWordMemo(searchWord)"
+                @keydown.enter="searchWordMemo(searchWord)"
+              ></v-text-field>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title> タグ検索 </v-list-item-title>
-              <v-form>
-                <v-text-field
-                  v-model="searchTag"
-                  placeholder="タグ入力"
-                  dense
-                  append-outer-icon="mdi-magnify"
-                  @click:append-outer="searchTagMemo(searchTag)"
-                  @keydown.enter="searchTagMemo(searchTag)"
-                  @input="filterTag(searchTag)"
-                ></v-text-field>
-              </v-form>
+              <v-text-field
+                v-model="searchTag"
+                placeholder="タグ入力"
+                dense
+                append-outer-icon="mdi-magnify"
+                @click:append-outer="searchTagMemo(searchTag)"
+                @keydown.enter="searchTagMemo(searchTag)"
+                @input="filterTag(searchTag)"
+              ></v-text-field>
               <v-list-item-title>タグ一覧</v-list-item-title>
               <v-list-item-group>
                 <v-list-item
@@ -66,22 +64,6 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-
-      <!-- <v-navigation-drawer right app>
-        <v-list>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title> ユーザー検索 </v-list-item-title>
-              <v-form>
-                <v-text-field
-                  placeholder="ユーザー名を入力"
-                  dense
-                ></v-text-field>
-              </v-form>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer> -->
       <v-row>
         <v-dialog v-model="dialog" width="500">
           <v-card>
@@ -91,11 +73,10 @@
             <v-card-text>
               {{ dialogMemo.content }}
             </v-card-text>
-            <div  v-row>
-              
-            <v-chip v-for="tag in dialogMemo.tag" :key="tag" >
-              {{ tag }}
-            </v-chip>
+            <div v-row>
+              <v-chip v-for="tag in dialogMemo.tag" :key="tag">
+                {{ tag }}
+              </v-chip>
             </div>
             <v-divider></v-divider>
             <v-col cols="12">
@@ -158,7 +139,10 @@ export default {
   data() {
     return {
       searchWord: '',
+      searchUser: '',
+      searchTag: '',
       displayMemos: '',
+      displayTags: '',
       dialog: false,
       dialogMemo: {
         title: '',
@@ -217,6 +201,12 @@ export default {
     this.displayTags = this.stateTag
   },
   methods: {
+    searchUserMemo() {
+      this.displayMemos = this.stateMemos.filter(
+        (e) =>
+          e.memoUserName.includes(this.searchUser)
+      )
+    },
     searchWordMemo() {
       this.displayMemos = this.stateMemos.filter(
         (e) =>
@@ -235,7 +225,7 @@ export default {
       )
     },
     filterTag(searchTag) {
-      this.displayTags = this.allTag.filter((e) => e.includes(searchTag))
+      this.displayTags = this.stateTag.filter((e) => e.includes(searchTag))
     },
     resetSearch() {
       this.displayMemos = this.stateMemos
