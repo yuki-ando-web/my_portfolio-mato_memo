@@ -122,20 +122,18 @@
               </div>
               <v-divider class="my-2"></v-divider>
 
-              <v-row>
+              <v-row no-gutters>
                 <div>
-                  <v-col class="mt-n6 pt-n6 text-caption">
-                    <v-card-actions>
-                      <v-text-field
-                        v-model="inputTag"
-                        text-caption
-                        placeholder="タグを入力"
-                      ></v-text-field>
-                      <v-btn depressed @click="addTag" @keydown.enter="addTag"
-                        >追加</v-btn
-                      >
-                    </v-card-actions>
-                  </v-col>
+                  <v-card-actions>
+                    <v-text-field
+                      v-model="inputTag"
+                      text-caption
+                      placeholder="タグを入力"
+                    ></v-text-field>
+                    <v-btn depressed @click="addTag" @keydown.enter="addTag"
+                      >追加</v-btn
+                    >
+                  </v-card-actions>
                 </div>
               </v-row>
               <v-container>
@@ -153,12 +151,14 @@
                     </v-chip>
                   </div>
                 </v-row>
-                <v-row no-gutters>
+                <v-row>
                   <v-file-input
                     v-model="inputPicture"
                     placeholder="画像を添付"
                   ></v-file-input>
-                  <v-btn depressed @click="uploadFile">アップロード</v-btn>
+                  <v-btn class="mt-4" depressed @click="uploadFile"
+                    >アップロード</v-btn
+                  >
                 </v-row>
                 <v-row no-gutters justify="center">
                   <div v-for="(picture, index) in memo.picture" :key="index">
@@ -325,6 +325,7 @@ export default {
     },
     // タグ追加機能 タグ入力欄の値が引数
     addTag() {
+      if(this.inputTag !== '')
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
         memoId: this.memo.memoId,

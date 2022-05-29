@@ -16,12 +16,15 @@ export const mutations = {
     await new Promise((resolve) => setTimeout(resolve, 500))
     location.reload()
   },
-    // ログアウト後、stateのユーザー情報をゲストに戻す
+  // ログアウト後、stateのユーザー情報をゲストに戻す
   resetUser(state) {
     state.userName = 'ゲスト'
     state.userId = ''
   },
-
+  initMemo(state) {
+    state.memos = []
+  },
+  setMemo(state) {},
   // メモ新規作成のstate処理,actionで用意した新規メモをstateに入れる(index.vueにて発火)
   newMemo(state, payload) {
     state.memos.unshift(payload)
@@ -59,15 +62,24 @@ export const mutations = {
     deleteTagMemo.tag.splice(deleteTagIndex, 1)
   },
   // 画像アップのstate処理(index.vue,user/_id.vueにて発火)
-  uploadPicture(state,payload){
+  uploadPicture(state, payload) {
     const upMemo = state.memos.find((e) => e.memoId === payload.memoId)
-    console.log(upMemo)
-    upMemo.picture.push(payload.url)
-  }
+    upMemo.picture.push({ name: payload.name, url: payload.url })
+  },
+  deletePicture(state, payload) {
+    const deletePictureMemo = state.memos.find(
+      (e) => e.memoId === payload.memoId
+    )
+    const deletePictureIndex = deletePictureMemo.picture.findIndex(
+      (e) => e.picture === payload.removePicture
+    )
+    deletePictureMemo.picture.splice(deletePictureIndex, 1)
+  },
 }
+
 export const actions = {
-//  firebase authenticationでログイン処理。ログイン後ユーザー情報更新のsetUser関数が実行される
-    login({ commit }) {
+  //  firebase authenticationでログイン処理。ログイン後ユーザー情報更新のsetUser関数が実行される
+  login({ commit }) {
     auth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(function (result) {
@@ -115,7 +127,7 @@ export const actions = {
       })
     commit('changeMemo', updateData)
   },
-   // メモ削除のfirestoreの処理,(index.vue,にて発火)
+  // メモ削除のfirestoreの処理,(index.vue,にて発火)
   deleteMemo({ commit }, payload) {
     memoRef
       .where('memoId', '==', payload.memoId)
@@ -127,7 +139,7 @@ export const actions = {
       })
     commit('deleteMemo', payload)
   },
-   // タグ追加のfirestoreの処理,memo内のtag配列に追加(index.vue,user/_id.vueにて発火)
+  // タグ追加のfirestoreの処理,memo内のtag配列に追加(index.vue,user/_id.vueにて発火)
   addTag({ commit }, payload) {
     memoRef
       .where('memoId', '==', payload.memoId)
@@ -141,7 +153,7 @@ export const actions = {
       })
     commit('addTag', payload)
   },
-   // タグ削除のfirestoreの処理,memo内のtag配列から削除(index.vue,user/_id.vueにて発火)
+  // タグ削除のfirestoreの処理,memo内のtag配列から削除(index.vue,user/_id.vueにて発火)
   deleteTag({ commit }, payload) {
     return new Promise((resolve, reject) => {
       memoRef
@@ -149,11 +161,9 @@ export const actions = {
         .get()
         .then((snapshot) => {
           snapshot.forEach((doc) => {
-            memoRef
-              .doc(doc.id)
-              .update({
-                tag: firebase.firestore.FieldValue.arrayRemove(payload.tag),
-              })
+            memoRef.doc(doc.id).update({
+              tag: firebase.firestore.FieldValue.arrayRemove(payload.removeTag),
+            })
           })
         })
       commit('deleteTag', payload)
@@ -161,9 +171,10 @@ export const actions = {
   },
   // 画像追加の処理storageにアップ後、urlを取得。urlをmemo内のpicture配列に追加
   uploadPicture({ commit }, payload) {
+    const pictureName = payload.picture.name
     firebase
       .storage()
-      .ref(`images/${payload.picture.name}`)
+      .ref(`images/${pictureName}`)
       .put(payload.picture)
       .then((snapshot) => {
         snapshot.ref.getDownloadURL().then((pictureUrl) => {
@@ -171,18 +182,44 @@ export const actions = {
             .where('memoId', '==', payload.memoId)
             .get()
             .then((snapshot) => {
-              console.log(pictureUrl)
               snapshot.forEach((doc) => {
                 memoRef.doc(doc.id).update({
-                  picture: firebase.firestore.FieldValue.arrayUnion(pictureUrl),
-                  
+                  picture: firebase.firestore.FieldValue.arrayUnion({
+                    name: pictureName,
+                    url: pictureUrl,
+                  }),
                 })
               })
             })
-            commit('uploadPicture', {memoId:payload.memoId,url:pictureUrl})
+          commit('uploadPicture', {
+            memoId: payload.memoId,
+            url: pictureUrl,
+            name: pictureName,
+          })
         })
       })
-
+  },
+  deletePicture({ commit }, payload) {
+    firebase
+      .storage()
+      .ref(`images/`)
+      .child(payload.removePicture.name)
+      .delete()
+      .then((snapshot) => {
+        memoRef
+          .where('picture', 'array-contains', payload.removePicture)
+          .get()
+          .then((snapshot) => {
+            snapshot.forEach((doc) => {
+              memoRef.doc(doc.id).update({
+                picture: firebase.firestore.FieldValue.arrayRemove(
+                  payload.removePicture
+                ),
+              })
+            })
+          })
+        commit('deletePicture', payload)
+      })
   },
 }
 
@@ -195,7 +232,7 @@ export const getters = {
   getStateUserMemos(state) {
     return state.memos.filter((e) => e.memoUserName === state.userName)
   },
-    // 全ユーザーのタグを取得。allUserIndex.vueのタグ一覧で使用
+  // 全ユーザーのタグを取得。allUserIndex.vueのタグ一覧で使用
   getStateTag(state) {
     let stateTag = []
     for (let i = 0; i < state.memos.length; i++) {
@@ -204,7 +241,7 @@ export const getters = {
     stateTag = Array.from(new Set(stateTag))
     return stateTag
   },
-    // 現在のユーザーのタグを取得,index.vueのタグ一覧で使用
+  // 現在のユーザーのタグを取得,index.vueのタグ一覧で使用
   getStateUserTag(state) {
     let stateUserTag = []
     const userMemo = state.memos.filter(

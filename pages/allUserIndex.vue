@@ -1,13 +1,25 @@
 <template>
   <v-app>
     <v-container>
-      <v-navigation-drawer app>
+      <v-navigation-drawer app permanent>
         <v-list>
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>
                 <v-chip @click="resetSearch"> 検索条件をクリア </v-chip>
               </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title> ユーザー検索 </v-list-item-title>
+              <v-form>
+                <v-text-field
+                  placeholder="ユーザー名を入力"
+                  dense
+                  append-outer-icon="mdi-magnify"
+                ></v-text-field>
+              </v-form>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
@@ -55,7 +67,7 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-navigation-drawer right app>
+      <!-- <v-navigation-drawer right app>
         <v-list>
           <v-list-item>
             <v-list-item-content>
@@ -69,7 +81,7 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-navigation-drawer>
+      </v-navigation-drawer> -->
       <v-row>
         <v-dialog v-model="dialog" width="500">
           <v-card>
@@ -79,25 +91,25 @@
             <v-card-text>
               {{ dialogMemo.content }}
             </v-card-text>
+            <div  v-row>
+              
+            <v-chip v-for="tag in dialogMemo.tag" :key="tag" >
+              {{ tag }}
+            </v-chip>
+            </div>
             <v-divider></v-divider>
             <v-col cols="12">
-
-            <div v-for="(picture, index) in dialogMemo.picture" :key="index">
-            <v-dialog :value="dialogMemo.pictureDialog">
-              <template v-slot:activator="{ on, attrs }">
-                <v-img
-                  :src="picture.url"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-img>
-              </template>
-              <v-card>
-
-              <v-img :src="picture.url"></v-img>
-              <div>{{picture.name}}</div>
-              </v-card>
-            </v-dialog>
-            </div>
+              <div v-for="(picture, index) in dialogMemo.picture" :key="index">
+                <v-dialog :value="dialogMemo.pictureDialog">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-img :src="picture.url" v-bind="attrs" v-on="on"></v-img>
+                  </template>
+                  <v-card>
+                    <v-img :src="picture.url"></v-img>
+                    <div>{{ picture.name }}</div>
+                  </v-card>
+                </v-dialog>
+              </div>
             </v-col>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -113,8 +125,8 @@
           cols="12"
           sm="6"
           md="6"
-          lg="6"
-          xl="6"
+          lg="4"
+          xl="4"
         >
           <v-card height="184">
             <v-card-text>{{ memo.memoUserName }}</v-card-text>
@@ -124,12 +136,15 @@
             <v-card-text>
               {{ memo.content.substr(0, bkPoint.contentCount) }}
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions class="overflow-x-auto">
+              <v-btn class="mr-4" outlined @click="openDialog(memo)"
+                >詳細</v-btn
+              >
+
               <div v-for="tag in memo.tag" :key="tag">
                 <v-chip>{{ tag }}</v-chip>
               </div>
               <v-spacer></v-spacer>
-              <v-btn outlined @click="openDialog(memo)">詳細</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -148,8 +163,8 @@ export default {
       dialogMemo: {
         title: '',
         content: '',
-        tag: '',
-        picture:[],
+        tag: [],
+        picture: [],
         pictureDialog: false,
       },
     }
