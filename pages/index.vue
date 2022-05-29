@@ -325,6 +325,7 @@ export default {
     },
     // タグ追加機能 タグ入力欄の値が引数
     addTag() {
+      if(this.inputTag !== '')
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
         memoId: this.memo.memoId,

@@ -4,7 +4,7 @@
       <v-spacer></v-spacer>
       
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
-        >全てのユーザーのメモ</v-btn
+        >全ユーザーのメモ一覧</v-btn
       >
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveUserTop"
         >{{ userName }}のメモ一覧&新規作成</v-btn

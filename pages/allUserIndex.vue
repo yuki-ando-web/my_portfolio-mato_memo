@@ -91,6 +91,12 @@
             <v-card-text>
               {{ dialogMemo.content }}
             </v-card-text>
+            <div  v-row>
+              
+            <v-chip v-for="tag in dialogMemo.tag" :key="tag" >
+              {{ tag }}
+            </v-chip>
+            </div>
             <v-divider></v-divider>
             <v-col cols="12">
               <div v-for="(picture, index) in dialogMemo.picture" :key="index">
@@ -130,12 +136,15 @@
             <v-card-text>
               {{ memo.content.substr(0, bkPoint.contentCount) }}
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions class="overflow-x-auto">
+              <v-btn class="mr-4" outlined @click="openDialog(memo)"
+                >詳細</v-btn
+              >
+
               <div v-for="tag in memo.tag" :key="tag">
                 <v-chip>{{ tag }}</v-chip>
               </div>
               <v-spacer></v-spacer>
-              <v-btn outlined @click="openDialog(memo)">詳細</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -154,7 +163,7 @@ export default {
       dialogMemo: {
         title: '',
         content: '',
-        tag: '',
+        tag: [],
         picture: [],
         pictureDialog: false,
       },
