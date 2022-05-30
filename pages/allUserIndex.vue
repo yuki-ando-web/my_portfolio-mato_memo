@@ -173,24 +173,24 @@ export default {
       const point = { titleCount: '', contentCount: '' }
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
+          point.titleCount = '5'
+          point.contentCount = '6'
+          break
+        case 'sm':
+          point.titleCount = '5'
+          point.contentCount = '6'
+          break
+        case 'md':
           point.titleCount = '10'
           point.contentCount = '15'
           break
-        case 'sm':
-          point.titleCount = '16'
-          point.contentCount = '25'
-          break
-        case 'md':
-          point.titleCount = '16'
-          point.contentCount = '25'
-          break
         case 'lg':
-          point.titleCount = '16'
-          point.contentCount = '25'
+          point.titleCount = '10'
+          point.contentCount = '15'
           break
         case 'xl':
-          point.titleCount = '16'
-          point.contentCount = '25'
+          point.titleCount = '10'
+          point.contentCount = '15'
           break
       }
       return point
