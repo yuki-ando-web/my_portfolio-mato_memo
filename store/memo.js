@@ -21,11 +21,13 @@ export const mutations = {
     state.userName = 'ゲスト'
     state.userId = ''
   },
-  // initMemo(state) {
-  //   state.memos = []
-  // },
-  // setMemo(state) {},
-  // メモ新規作成のstate処理,actionで用意した新規メモをstateに入れる(index.vueにて発火)
+  initMemo(state) {
+    state.memos = []
+  },
+  addMemo(state , memo){
+    state.memos.push(memo)
+  },
+ 
   newMemo(state, payload) {
     state.memos.unshift(payload)
   },
@@ -110,6 +112,23 @@ export const actions = {
     }
     memoRef.add(memo)
     commit('newMemo', memo)
+  },
+  fetchMemo({ commit }) {
+    commit('initMemo')
+    return new Promise((resolve, reject) => {
+      memoRef.orderBy('created_at', 'desc').get()
+      .then(res => {
+        res.forEach((doc) => {
+          commit('addMemo', doc.data())
+          console.log(doc.data())
+          resolve(true)
+        })
+      })
+      .catch(error => {
+        console.error('An error occurred in fetchMemo(): ', error)
+        reject(error)
+      })
+    })
   },
   // メモ編集のfirestoreの処理,テキストエリアの値が更新されるたび発火(index.vue,user/_id.vueにて発火)
   changeMemo({ commit }, updateData) {
