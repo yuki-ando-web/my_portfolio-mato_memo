@@ -21,10 +21,10 @@ export const mutations = {
     state.userName = 'ゲスト'
     state.userId = ''
   },
-  initMemo(state) {
-    state.memos = []
-  },
-  setMemo(state) {},
+  // initMemo(state) {
+  //   state.memos = []
+  // },
+  // setMemo(state) {},
   // メモ新規作成のstate処理,actionで用意した新規メモをstateに入れる(index.vueにて発火)
   newMemo(state, payload) {
     state.memos.unshift(payload)

@@ -59,25 +59,33 @@
               placeholder="画像を添付"
               @change="uploadFile"
             ></v-file-input>
-            <v-row no-gutters  justify="center" >
-
-              <div
-                v-for="(picture, index) in detailUserMemo.picture"
-                :key="index"
-              >
-                <v-dialog v-model="dialog">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-img
-                      :src="picture"
-                      v-bind="attrs"
-                      v-on="on"
-                      width=48vh
-                    ></v-img>
-                  </template>
-                  <v-img :src="picture"></v-img>
-                </v-dialog>
-              </div>
-            </v-row>
+           <v-row no-gutters justify="center">
+                  <div v-for="(picture, index) in detailUserMemo.picture" :key="index">
+                    <v-dialog :value="detailUserMemo.dialog">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-img
+                          :src="picture.url"
+                          height="12vh"
+                          width="20vh"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-img>
+                        <v-btn
+                          color="grey lighten-1"
+                          icon="mdi-trash-can-outline"
+                          right
+                          @click="deletePicture(picture)"
+                        >
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-img :src="picture.url"></v-img>
+                        <div>{{ picture.name }}</div>
+                      </v-card>
+                    </v-dialog>
+                  </div>
+                </v-row>
           </v-row>
         </v-container>
       </v-card>
@@ -90,7 +98,6 @@
 export default {
   data() {
     return {
-     
       tag: [],
       inputTag: '',
       inputPicture: [],
@@ -140,7 +147,7 @@ export default {
     addTag() {
       this.$store.dispatch('userTop/addTag', {
         tag: this.inputTag,
-        memoId: this.memo.memoId,
+        memoId: this.detailUserMemo.memoId,
       })
       this.inputTag = ''
       this.displayTags = this.stateUserTag
@@ -149,17 +156,27 @@ export default {
       if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
         this.$store.dispatch('userTop/deleteTag', {
           removeTag: tag,
-          memoId: this.memo.memoId,
+          memoId: this.detailUserMemo.memoId,
         })
       }
       this.displayTags = this.stateUserTag
     },
     uploadFile() {
-      this.$store.dispatch('userTop/uploadPicture', {
-        picture: this.inputPicture,
-        memoId: this.detailUserMemo.memoId,
-      })
-      this.inputPicture = []
+      if (this.inputPicture.length !== 0) {
+        this.$store.dispatch('userTop/uploadPicture', {
+          picture: this.inputPicture,
+          memoId:  this.detailUserMemo.memoId,
+        })
+        this.inputPicture = []
+      }
+    },
+    deletePicture(picture) {
+      if (window.confirm(`${picture.name}写真を削除してよろしいですか。`)) {
+        this.$store.dispatch('userTop/deletePicture', {
+          removePicture: picture,
+          memoId: this.detailUserMemo.memoId,
+        })
+      }
     },
   },
 }
