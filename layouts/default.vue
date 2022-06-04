@@ -66,17 +66,17 @@ export default {
   computed: {
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
   },
   
   methods: {
     login() {
-      this.$store.dispatch('userTop/login')
+      this.$store.dispatch('memo/login')
     },
     logout() {
-      this.$store.dispatch('userTop/logout')
+      this.$store.dispatch('memo/logout')
       this.$router.go('/')
     },
     moveIndex() {
