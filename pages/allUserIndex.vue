@@ -167,17 +167,17 @@ export default {
   computed: {
     stateMemos: {
       get() {
-        return this.$store.getters['userTop/getStateMemos']
+        return this.$store.getters['memo/getStateMemos']
       },
     },
     stateTag: {
       get() {
-        return this.$store.getters['userTop/getStateTag']
+        return this.$store.getters['memo/getStateTag']
       },
     },
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
     bkPoint() {
