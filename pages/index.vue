@@ -187,6 +187,7 @@
                     </v-dialog>
                   </div>
                 </v-row>
+        <!-- <iframe class="iframe" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTs_vApg3BPPum66lRDDXzj75N-fzFbKeD0v2aGTMub33VORa373ruiJrBXmAFLgc3B-DQWCOuB_kUl/pubhtml?gid=1030714401&amp;single=true&amp;widget=true&amp;headers=false"></iframe> -->
               </v-container>
             </v-card>
           </v-col>
@@ -222,19 +223,19 @@ export default {
     // 現在のユーザーのメモを全て取得
     stateUserMemos: {
       get() {
-        return this.$store.getters['userTop/getStateUserMemos']
+        return this.$store.getters['memo/getStateUserMemos']
       },
     },
     // 現在のユーザーの名前を取得
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
     // 現在のユーザーが使っている全てのタグを取得
     stateUserTag: {
       get() {
-        return this.$store.getters['userTop/getStateUserTag']
+        return this.$store.getters['memo/getStateUserTag']
       },
     },
     // 画面サイズによってサイドバーのサイズ、一覧表示されたカードのサイズと文字数が変わる
@@ -247,7 +248,7 @@ export default {
           point.contentCount = '65'
           break
         case 'sm':
-          point.cardsWidth = '25vh'
+          point.cardsWidth = '100vh'
           point.navWidth = '192'
           point.contentCount = '65'
           break
@@ -269,10 +270,9 @@ export default {
       }
       return point
     },
-    dotted_line: {},
   },
  async created() {
-   await this.$store.dispatch('userTop/fetchMemo')
+   await this.$store.dispatch('memo/fetchMemo')
     this.displayUserMemos = this.stateUserMemos
     this.displayTags = this.stateUserTag
         console.log(this.displayUserMemos)
@@ -285,9 +285,7 @@ export default {
 
   },
   // 最初は先頭のメモの情報が表示される
-  mounted() {
-   
-  },
+
   methods: {
     // 一覧のメモをクリックした時にそのメモの情報を表示する
     focusMemo(index) {
@@ -308,7 +306,7 @@ export default {
     },
     // メモ新規作成機能。検索条件がクリアになり、新規に作ったメモの情報が取得される
     newMemo() {
-      this.$store.dispatch('userTop/newMemo')
+      this.$store.dispatch('memo/newMemo')
       this.resetSearch()
       this.focusMemo(0)
     },
@@ -319,13 +317,13 @@ export default {
         title: document.getElementById('title').value,
         content: document.getElementById('content').value,
       }
-      this.$store.dispatch('userTop/changeMemo', updateData)
+      this.$store.dispatch('memo/changeMemo', updateData)
     },
     //  メモ削除機能。確認モーダルが表示された後発動。検索条件がクリアになり、先頭のメモの情報が取得される
     deleteMemo({ memo, index }) {
       this.focusMemo(index)
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
-        this.$store.dispatch('userTop/deleteMemo', this.memo)
+        this.$store.dispatch('memo/deleteMemo', this.memo)
         this.displayUserMemos = this.stateUserMemos
         this.focusMemo(0)
       }
@@ -333,7 +331,7 @@ export default {
     // タグ追加機能 タグ入力欄の値が引数
     addTag() {
       if(this.inputTag !== '')
-      this.$store.dispatch('userTop/addTag', {
+      this.$store.dispatch('memo/addTag', {
         tag: this.inputTag,
         memoId: this.memo.memoId,
       })
@@ -343,7 +341,7 @@ export default {
     // タグ削除機能 確認モーダルが表示された後発動
     deleteTag(tag) {
       if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
-        this.$store.dispatch('userTop/deleteTag', {
+        this.$store.dispatch('memo/deleteTag', {
           removeTag: tag,
           memoId: this.memo.memoId,
         })
@@ -353,7 +351,7 @@ export default {
     //  画像追加機能
     uploadFile() {
       if (this.inputPicture.length !== 0) {
-        this.$store.dispatch('userTop/uploadPicture', {
+        this.$store.dispatch('memo/uploadPicture', {
           picture: this.inputPicture,
           memoId: this.memo.memoId,
         })
@@ -362,7 +360,7 @@ export default {
     },
     deletePicture(picture) {
       if (window.confirm(`${picture.name}写真を削除してよろしいですか。`)) {
-        this.$store.dispatch('userTop/deletePicture', {
+        this.$store.dispatch('memo/deletePicture', {
           removePicture: picture,
           memoId: this.memo.memoId,
         })
@@ -407,4 +405,9 @@ export default {
   },
 }
 </script>
-
+<style>
+  iframe {
+    width: 100vh;
+    height: 100vh
+  }
+</style>
