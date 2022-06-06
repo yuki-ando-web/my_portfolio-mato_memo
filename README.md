@@ -36,7 +36,7 @@ https://user-images.githubusercontent.com/97369008/171793934-e553be39-a6d5-49e0-
 アプリにはログインによるユーザー作成機能があり、全ユーザーのメモを閲覧することができます。
 
 ## 使用技術
-vue@2.6.14
+Vue.js 2.6.14
 
 Nuxt.js 2.15.8
 
@@ -44,10 +44,9 @@ Vuetify 2.6.1
 
 Firebase 8.1.0
 
-eslint@8.9.0
+eslint 8.9.0
 
-eslint@8.9.0
-
+prettier 2.5.1
 
 
 ## ・今後実装したい機能
