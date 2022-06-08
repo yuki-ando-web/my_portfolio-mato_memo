@@ -68,12 +68,14 @@
         <v-row>
           <v-dialog v-model="dialog" width="500">
             <v-card>
-              <v-card-title class="text-h5 grey lighten-2">
-                {{ dialogMemo.title }}
-              </v-card-title>
-              <v-card-text>
-                {{ dialogMemo.content }}
-              </v-card-text>
+              <div class="text">
+                <v-card-title class="text-h5 grey lighten-2">
+                  {{ dialogMemo.title }}
+                </v-card-title>
+                <v-card-text>
+                  {{ dialogMemo.content }}
+                </v-card-text>
+              </div>
               <div v-row>
                 <v-chip v-for="tag in dialogMemo.tag" :key="tag">
                   {{ tag }}
@@ -258,8 +260,8 @@ export default {
 }
 </script>
 <style>
-.v-dialog {
-  white-space: break-spaces;
+.text {
+  white-space: pre-line;
 }
 </style>
 

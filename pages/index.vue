@@ -271,15 +271,22 @@ export default {
     },
     dotted_line: {},
   },
-  // 最初は先頭のメモの情報が表示される
-  mounted() {
-    if (this.stateUserMemos.length > 0) {
+ async created() {
+   await this.$store.dispatch('userTop/fetchMemo')
+    this.displayUserMemos = this.stateUserMemos
+    this.displayTags = this.stateUserTag
+        console.log(this.displayUserMemos)
+         if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
     }
-    this.displayUserMemos = this.stateUserMemos
-    this.displayTags = this.stateUserTag
+    
+
+  },
+  // 最初は先頭のメモの情報が表示される
+  mounted() {
+   
   },
   methods: {
     // 一覧のメモをクリックした時にそのメモの情報を表示する
