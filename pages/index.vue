@@ -3,7 +3,7 @@
     <v-app>
       <!-- サイドバー 新規作成や検索機能を持つ-->
       <!-- 幅は画面サイズによって変わる -->
-      <v-navigation-drawer app permanent :width="bkPoint.navWidth">
+      <v-navigation-drawer app clipped permanent :width="bkPoint.navWidth">
         <v-list>
           <v-list-item>
             <v-list-item-content>

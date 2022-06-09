@@ -28,6 +28,7 @@
     </v-app-bar>
     <v-main>
       <v-container>
+
         <Nuxt />
       </v-container>
     </v-main>
@@ -42,7 +43,7 @@ export default {
   name: 'DefaultLayout',
   data() {
     return {
-      clipped: false,
+      clipped: true,
       drawer: false,
       fixed: false,
       items: [

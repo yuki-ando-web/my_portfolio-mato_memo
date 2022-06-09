@@ -154,7 +154,7 @@ export default {
     },
     deleteTag(tag) {
       if (window.confirm(`「${tag}」を削除してよろしいですか。`)) {
-        this.$store.dispatch('userTop/deleteTag', {
+        this.$store.dispatch('memo/deleteTag', {
           removeTag: tag,
           memoId: this.detailUserMemo.memoId,
         })

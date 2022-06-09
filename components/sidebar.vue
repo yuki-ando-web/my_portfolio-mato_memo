@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <v-app>
-        <v-navigation-drawer app clipped permanent :width="bkPoint.navWidth">
+
+   <v-navigation-drawer app permanent clipped :width="bkPoint.navWidth">
           <v-list>
             <v-list-item>
               <v-list-item-content>
@@ -64,83 +63,6 @@
             </v-list-item>
           </v-list>
         </v-navigation-drawer>
-        <v-row>
-          <v-dialog v-model="dialog" width="500">
-            <v-card>
-              <div class="text">
-                <v-card-title class="text-h5 grey lighten-2">
-                  {{ dialogMemo.title }}
-                </v-card-title>
-                <v-card-text>
-                  {{ dialogMemo.content }}
-                </v-card-text>
-              </div>
-              <div v-row>
-                <v-chip v-for="tag in dialogMemo.tag" :key="tag">
-                  {{ tag }}
-                </v-chip>
-              </div>
-              <v-divider></v-divider>
-              <v-col cols="12">
-                <div
-                  v-for="(picture, index) in dialogMemo.picture"
-                  :key="index"
-                >
-                  <v-dialog :value="dialogMemo.pictureDialog">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-img
-                        :src="picture.url"
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-img>
-                    </template>
-                    <v-card>
-                      <v-img :src="picture.url"></v-img>
-                      <div>{{ picture.name }}</div>
-                    </v-card>
-                  </v-dialog>
-                </div>
-              </v-col>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="dialog = false">
-                  閉じる
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-col
-            v-for="(memo, index) in displayMemos"
-            :key="index"
-            cols="12"
-            sm="6"
-            md="6"
-            lg="4"
-            xl="4"
-          >
-            <v-card height="184">
-              <v-card-text>{{ memo.memoUserName }}</v-card-text>
-              <v-card-title class="mt-n8">
-                {{ memo.title.substr(0, bkPoint.titleCount) }}
-              </v-card-title>
-              <v-card-text>
-                {{ memo.content.substr(0, bkPoint.contentCount) }}
-              </v-card-text>
-              <v-card-actions class="overflow-x-auto">
-                <v-btn class="mr-4" outlined @click="openDialog(memo)"
-                  >詳細</v-btn
-                >
-
-                <div v-for="tag in memo.tag" :key="tag">
-                  <v-chip>{{ tag }}</v-chip>
-                </div>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-    </v-app>
-  </div>
 </template>
 
 <script>
@@ -257,9 +179,3 @@ export default {
   },
 }
 </script>
-<style>
-.text {
-  white-space: pre-line;
-}
-</style>
-
