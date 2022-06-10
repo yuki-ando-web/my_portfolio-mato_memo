@@ -21,12 +21,12 @@
               <v-list-item-title> ワード検索 </v-list-item-title>
               <!-- ワード入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
-                v-model="searchWordUserTop"
+                v-model="searchKeyword"
                 placeholder="検索ワードを入力"
                 dense
                 append-outer-icon="mdi-magnify"
-                @click:append-outer="searchWordMemo(searchWordUserTop)"
-                @keydown.enter="searchWordMemo(searchWordUserTop)"
+                @click:append-outer="searchWordMemo(searchKeyword)"
+                @keydown.enter="searchWordMemo(searchKeyword)"
               ></v-text-field>
             </v-list-item-content>
           </v-list-item>
@@ -35,13 +35,13 @@
               <v-list-item-title> タグ検索 </v-list-item-title>
               <!-- タグ入力欄 アイコンクリック時とエンターキーが押された時にv-modelを引数に関数が発動 -->
               <v-text-field
-                v-model="searchTagUserTop"
+                v-model="searchTag"
                 placeholder="タグ入力"
                 dense
                 append-outer-icon="mdi-magnify"
-                @click:append-outer="searchTagMemo(searchTagUserTop)"
-                @keydown.enter="searchTagMemo(searchTagUserTop)"
-                @input="filterTag(searchTagUserTop)"
+                @click:append-outer="searchTagMemo(searchTag)"
+                @keydown.enter="searchTagMemo(searchTag)"
+                @input="filterTag(searchTag)"
               ></v-text-field>
               <!-- タグ一覧、クリックすることでタグを含むメモを表示する機能あり -->
               <v-list-item-title>タグ一覧</v-list-item-title>
@@ -69,7 +69,7 @@
             max-height="100vh"
             :width="bkPoint.cardsWidth"
           >
-            <div v-for="(memo, index) in displayUserMemos" :key="index">
+            <div v-for="(memo, index) in memoList" :key="index">
               <v-card
                 height="25vh"
                 @click="
@@ -212,10 +212,10 @@ export default {
       },
       inputTag: '',
       pictures: '',
-      searchWordUserTop: '',
-      displayUserMemos: '',
+      searchKeyword: '',
+      memoList: '',
       displayTags: '',
-      searchTagUserTop: '',
+      searchTag: '',
       inputPicture: [],
     }
   },
@@ -273,9 +273,9 @@ export default {
   },
  async created() {
    await this.$store.dispatch('memo/fetchMemo')
-    this.displayUserMemos = this.stateUserMemos
+    this.memoList = this.stateUserMemos
     this.displayTags = this.stateUserTag
-        console.log(this.displayUserMemos)
+        console.log(this.memoList)
          if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
@@ -289,8 +289,8 @@ export default {
   methods: {
     // 一覧のメモをクリックした時にそのメモの情報を表示する
     focusMemo(index) {
-      if (this.displayUserMemos.length > 0) {
-        this.memo = this.displayUserMemos[index]
+      if (this.memoList.length > 0) {
+        this.memo = this.memoList[index]
         // メモがない場合は空白になる
       } else {
         this.memo = ''
@@ -301,7 +301,7 @@ export default {
     // モバイル画面の時に編集ページに移動する
     moveMemo(index) {
       if (this.$vuetify.breakpoint.smAndDown === true) {
-        this.$router.push(`user/${this.displayUserMemos[index].memoId}`)
+        this.$router.push(`user/${this.memoList[index].memoId}`)
       }
     },
     // メモ新規作成機能。検索条件がクリアになり、新規に作ったメモの情報が取得される
@@ -324,7 +324,7 @@ export default {
       this.focusMemo(index)
       if (window.confirm(`「${memo.title}」を削除してよろしいですか。`)) {
         this.$store.dispatch('memo/deleteMemo', this.memo)
-        this.displayUserMemos = this.stateUserMemos
+        this.memoList = this.stateUserMemos
         this.focusMemo(0)
       }
     },
@@ -368,8 +368,8 @@ export default {
     },
     // ワード検索機能。ワードを含むメモの配列を表示させる
     searchWordMemo() {
-      const upSword = this.searchWordUserTop.toUpperCase()
-      this.displayUserMemos = this.stateUserMemos.filter(
+      const upSword = this.searchKeyword.toUpperCase()
+      this.memoList = this.stateUserMemos.filter(
         (e) =>
           e.title.toUpperCase().includes(upSword) ||
           e.content.toUpperCase().includes(upSword)
@@ -378,29 +378,29 @@ export default {
     },
     // ワード検索機能。ワードを含むメモの配列を表示させる
     searchTagMemo() {
-      this.displayUserMemos = this.stateUserMemos.filter((e) =>
-        e.tag.includes(this.searchTagUserTop)
+      this.memoList = this.stateUserMemos.filter((e) =>
+        e.tag.includes(this.searchTag)
       )
       this.focusMemo(0)
     },
     // タグ一覧のタグをクリックするとそのタグが含まれるメモを表示する
     moveTag(displayTag) {
-      this.displayUserMemos = this.stateUserMemos.filter((e) =>
+      this.memoList = this.stateUserMemos.filter((e) =>
         e.tag.includes(displayTag)
       )
       this.focusMemo(0)
     },
     // タグ検索欄に入力した値が含まれるタグのみをタグ一覧に表示する
-    filterTag(searchTagUserTop) {
+    filterTag(searchTag) {
       this.displayTags = this.stateUserTag.filter((e) =>
-        e.includes(searchTagUserTop)
+        e.includes(searchTag)
       )
     },
     // 検索条件をクリアにする。新規作成や削除した時にも発動ï
     resetSearch() {
-      this.displayUserMemos = this.stateUserMemos
-      this.searchWordUserTop = ''
-      this.searchTagUserTop = ''
+      this.memoList = this.stateUserMemos
+      this.searchKeyword = ''
+      this.searchTag = ''
     },
   },
 }
