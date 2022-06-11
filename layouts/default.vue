@@ -2,17 +2,27 @@
   <v-app dark>
     <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
       <v-spacer></v-spacer>
-      
+
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全ユーザーのメモ一覧</v-btn
       >
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveUserTop"
         >{{ userName }}のメモ一覧&新規作成</v-btn
       >
-      <v-btn v-show="userName !== 'ゲスト'" class="grey lighten-2 mr-1" depressed @click="logout">
+      <v-btn
+        v-show="userName !== 'ゲスト'"
+        class="grey lighten-2 mr-1"
+        depressed
+        @click="logout"
+      >
         ログアウト
       </v-btn>
-      <v-btn v-show="userName == 'ゲスト'"  class="grey lighten-2 mr-1" depressed @click="login">
+      <v-btn
+        v-show="userName == 'ゲスト'"
+        class="grey lighten-2 mr-1"
+        depressed
+        @click="login"
+      >
         ログイン
       </v-btn>
     </v-app-bar>
@@ -56,16 +66,17 @@ export default {
   computed: {
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
   },
+  
   methods: {
     login() {
-      this.$store.dispatch('userTop/login')
+      this.$store.dispatch('memo/login')
     },
-    async logout() {
-      await this.$store.dispatch('userTop/logout')
+    logout() {
+      this.$store.dispatch('memo/logout')
       this.$router.go('/')
     },
     moveIndex() {

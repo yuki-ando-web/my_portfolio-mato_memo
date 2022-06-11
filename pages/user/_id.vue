@@ -4,21 +4,21 @@
       <v-card height="100%">
         <div>
           <v-text-field
+            id="title"
             autofocus
             auto-grow
             dense
             full-width
             placeholder="タイトル"
             :value="detailUserMemo.title"
-            id="title"
             @input="changeMemo"
           ></v-text-field>
           <v-textarea
+            id="content"
             dense
             rows="20"
             full-width
             placeholder="コンテンツ"
-            id="content"
             :value="detailUserMemo.content"
             @input="changeMemo"
           ></v-textarea>
@@ -111,19 +111,19 @@ export default {
   computed: {
     detailUserMemo: {
       get() {
-        return this.$store.getters['userTop/getStateUserMemos'].find(
+        return this.$store.getters['memo/getStateUserMemos'].find(
           (e) => e.memoId === this.$route.params.id
         )
       },
     },
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
     stateUserTag: {
       get() {
-        return this.$store.getters['userTop/getStateUserTag']
+        return this.$store.getters['memo/getStateUserTag']
       },
     },
   },
@@ -137,15 +137,15 @@ export default {
         title: document.getElementById('title').value,
         content: document.getElementById('content').value,
       }
-      this.$store.dispatch('userTop/changeMemo', updateData)
+      this.$store.dispatch('memo/changeMemo', updateData)
     },
     deleteMemo() {
-      this.$store.dispatch('userTop/deleteMemo', this.memo)
+      this.$store.dispatch('memo/deleteMemo', this.memo)
       this.displayUserMemos = this.stateUserMemos
       this.focusMemo(0)
     },
     addTag() {
-      this.$store.dispatch('userTop/addTag', {
+      this.$store.dispatch('memo/addTag', {
         tag: this.inputTag,
         memoId: this.detailUserMemo.memoId,
       })
@@ -163,7 +163,7 @@ export default {
     },
     uploadFile() {
       if (this.inputPicture.length !== 0) {
-        this.$store.dispatch('userTop/uploadPicture', {
+        this.$store.dispatch('memo/uploadPicture', {
           picture: this.inputPicture,
           memoId:  this.detailUserMemo.memoId,
         })
@@ -172,7 +172,7 @@ export default {
     },
     deletePicture(picture) {
       if (window.confirm(`${picture.name}写真を削除してよろしいですか。`)) {
-        this.$store.dispatch('userTop/deletePicture', {
+        this.$store.dispatch('memo/deletePicture', {
           removePicture: picture,
           memoId: this.detailUserMemo.memoId,
         })

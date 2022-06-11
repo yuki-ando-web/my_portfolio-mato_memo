@@ -68,12 +68,14 @@
         <v-row>
           <v-dialog v-model="dialog" width="500">
             <v-card>
-              <v-card-title class="text-h5 grey lighten-2">
-                {{ dialogMemo.title }}
-              </v-card-title>
-              <v-card-text>
-                {{ dialogMemo.content }}
-              </v-card-text>
+              <div class="text">
+                <v-card-title class="text-h5 grey lighten-2">
+                  {{ dialogMemo.title }}
+                </v-card-title>
+                <v-card-text>
+                  {{ dialogMemo.content }}
+                </v-card-text>
+              </div>
               <div v-row>
                 <v-chip v-for="tag in dialogMemo.tag" :key="tag">
                   {{ tag }}
@@ -165,17 +167,17 @@ export default {
   computed: {
     stateMemos: {
       get() {
-        return this.$store.getters['userTop/getStateMemos']
+        return this.$store.getters['memo/getStateMemos']
       },
     },
     stateTag: {
       get() {
-        return this.$store.getters['userTop/getStateTag']
+        return this.$store.getters['memo/getStateTag']
       },
     },
     userName: {
       get() {
-        return this.$store.getters['userTop/getUserName']
+        return this.$store.getters['memo/getUserName']
       },
     },
     bkPoint() {
@@ -258,8 +260,8 @@ export default {
 }
 </script>
 <style>
-.v-dialog {
-  white-space: break-spaces;
+.text {
+  white-space: pre-line;
 }
 </style>
 
