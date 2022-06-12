@@ -224,7 +224,7 @@ export const actions = {
       .ref(`images/`)
       .child(payload.removePicture.name)
       .delete()
-      .then((snapshot) => {
+      .then(() => {
         memoRef
           .where('picture', 'array-contains', payload.removePicture)
           .get()
@@ -244,7 +244,7 @@ export const actions = {
 
 export const getters = {
   // 全ユーザーのメモを取得。allUserIndex.vueで使用
-  getStateMemos(state) {
+  getStateAllMemos(state) {
     return state.memos
   },
   // 現在のユーザーのメモを取得,index.vueで使用
@@ -252,7 +252,7 @@ export const getters = {
     return state.memos.filter((e) => e.memoUserName === state.userName)
   },
   // 全ユーザーのタグを取得。allUserIndex.vueのタグ一覧で使用
-  getStateTag(state) {
+  getStateAllTags(state) {
     let stateTag = []
     for (let i = 0; i < state.memos.length; i++) {
       stateTag = stateTag.concat(state.memos[i].tag)
