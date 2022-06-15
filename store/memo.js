@@ -1,6 +1,7 @@
 import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 const memoRef = db.collection('memos')
+const favMemo = db.collection('favMemos')
 const auth = firebase.auth()
 export const state = () => ({
   memos: [],
@@ -24,10 +25,10 @@ export const mutations = {
   initMemo(state) {
     state.memos = []
   },
-  addMemo(state , memo){
+  addMemo(state, memo) {
     state.memos.push(memo)
   },
- 
+
   newMemo(state, payload) {
     state.memos.unshift(payload)
   },
@@ -99,7 +100,7 @@ export const actions = {
       })
   },
   // メモ新規作成のfirestoreの処理,(index.vueにて発火)
-  newMemo({ commit, state }) {
+  async newMemo({ commit, state }) {
     const memo = {
       title: '',
       content: '',
@@ -110,14 +111,35 @@ export const actions = {
       tag: [],
       picture: [],
     }
-    memoRef.add(memo)
-    commit('newMemo', memo)
+    try {
+      await memoRef.add(memo)
+      commit('newMemo', memo)
+    } catch (e) {
+      console.log(e)
+      alert('メモの投稿に失敗しました。')
+    }
   },
+  // async fetchMemo({ commit }) {
+  //   commit('initMemo')
+  //   try {
+  //     await memoRef
+  //       .orderBy('created_at', 'desc')
+  //       .get()
+  //       .forEach((doc) => {
+  //         commit('addMemo', doc.data())
+  //         console.log(doc.data())
+  //       })
+  //   } catch (e) {
+  //     console.log(e)
+  //     alert('メモの取得に失敗しました。')
+  //   }
+  // },
   fetchMemo({ commit }) {
     commit('initMemo')
     return new Promise((resolve, reject) => {
       memoRef.orderBy('created_at', 'desc').get()
       .then(res => {
+        console.log(res)
         res.forEach((doc) => {
           commit('addMemo', doc.data())
           console.log(doc.data())
