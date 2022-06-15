@@ -1,6 +1,7 @@
 <template>
   <v-app dark>
     <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
+      
       <v-spacer></v-spacer>
 
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"

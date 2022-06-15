@@ -98,29 +98,35 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
+            <v-btn
+              v-model="textSize"
+              class="mb-2 mt-n2 grey lighten-5"
+              depressed
+              @click="changeTextSize(textSize)"
+              >テキストサイズ：{{ textSize }}</v-btn
+            >
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
-              <div>
-                <v-text-field
-                  id="title"
-                  :value="memo.title"
-                  autofocus
-                  auto-grow
-                  dense
-                  full-width
-                  placeholder="タイトル"
-                  @input="changeMemo"
-                ></v-text-field>
-                <v-textarea
-                  id="content"
-                  :value="memo.content"
-                  dense
-                  rows="20"
-                  full-width
-                  placeholder="コンテンツ"
-                  @input="changeMemo"
-                ></v-textarea>
-              </div>
-              <v-divider class="my-2"></v-divider>
+              <v-text-field
+                id="title"
+                :value="memo.title"
+                autofocus
+                auto-grow
+                dense
+                full-width
+                placeholder="タイトル"
+                :class="`text-${titleSize}`"
+                @input="changeMemo"
+              ></v-text-field>
+              <v-textarea
+                id="content"
+                :value="memo.content"
+                dense
+                rows="20"
+                full-width
+                placeholder="コンテンツ"
+                :class="`text-${contentSize}`"
+                @input="changeMemo"
+              ></v-textarea>
 
               <v-row no-gutters>
                 <div>
@@ -160,7 +166,7 @@
                     >アップロード</v-btn
                   >
                 </v-row>
-                <v-row no-gutters justify="center">
+                <v-row no-gutters justify="start">
                   <div v-for="(picture, index) in memo.picture" :key="index">
                     <v-dialog :value="memo.dialog">
                       <template v-slot:activator="{ on, attrs }">
@@ -172,7 +178,6 @@
                           v-on="on"
                         ></v-img>
                         <v-btn
-                          color="grey lighten-1"
                           icon="mdi-trash-can-outline"
                           right
                           @click="deletePicture(picture)"
@@ -187,7 +192,7 @@
                     </v-dialog>
                   </div>
                 </v-row>
-        <!-- <iframe class="iframe" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTs_vApg3BPPum66lRDDXzj75N-fzFbKeD0v2aGTMub33VORa373ruiJrBXmAFLgc3B-DQWCOuB_kUl/pubhtml?gid=1030714401&amp;single=true&amp;widget=true&amp;headers=false"></iframe> -->
+                <!-- <iframe class="iframe" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTs_vApg3BPPum66lRDDXzj75N-fzFbKeD0v2aGTMub33VORa373ruiJrBXmAFLgc3B-DQWCOuB_kUl/pubhtml?gid=1030714401&amp;single=true&amp;widget=true&amp;headers=false"></iframe> -->
               </v-container>
             </v-card>
           </v-col>
@@ -217,6 +222,9 @@ export default {
       displayTags: '',
       searchTag: '',
       inputPicture: [],
+      textSize: '中',
+      titleSize: '',
+      contentSize: '',
     }
   },
   computed: {
@@ -271,18 +279,16 @@ export default {
       return point
     },
   },
- async created() {
-   await this.$store.dispatch('memo/fetchMemo')
+  async created() {
+    await this.$store.dispatch('memo/fetchMemo')
     this.memoList = this.stateUserMemos
     this.displayTags = this.stateUserTag
-        console.log(this.memoList)
-         if (this.stateUserMemos.length > 0) {
+    console.log(this.memoList)
+    if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
     }
-    
-
   },
   // 最初は先頭のメモの情報が表示される
 
@@ -330,11 +336,11 @@ export default {
     },
     // タグ追加機能 タグ入力欄の値が引数
     addTag() {
-      if(this.inputTag !== '')
-      this.$store.dispatch('memo/addTag', {
-        tag: this.inputTag,
-        memoId: this.memo.memoId,
-      })
+      if (this.inputTag !== '')
+        this.$store.dispatch('memo/addTag', {
+          tag: this.inputTag,
+          memoId: this.memo.memoId,
+        })
       this.inputTag = ''
       this.displayTags = this.stateUserTag
     },
@@ -392,9 +398,7 @@ export default {
     },
     // タグ検索欄に入力した値が含まれるタグのみをタグ一覧に表示する
     filterTag(searchTag) {
-      this.displayTags = this.stateUserTag.filter((e) =>
-        e.includes(searchTag)
-      )
+      this.displayTags = this.stateUserTag.filter((e) => e.includes(searchTag))
     },
     // 検索条件をクリアにする。新規作成や削除した時にも発動ï
     resetSearch() {
@@ -402,12 +406,31 @@ export default {
       this.searchKeyword = ''
       this.searchTag = ''
     },
+    changeTextSize(textSize) {
+      console.log(this.titleSize)
+
+      if (textSize === '小') {
+        this.textSize = '中'
+        this.titleSize = 'h5'
+        this.contentSize = 'subtitle-1'
+      }
+      if (textSize === '中') {
+        this.textSize = '大'
+        this.titleSize = 'h4'
+        this.contentSize = 'h6'
+      }
+      if (textSize === '大') {
+        this.textSize = '小'
+        this.titleSize = 'h6'
+        this.contentSize = 'caption'
+      }
+    },
   },
 }
 </script>
 <style>
-  iframe {
-    width: 100vh;
-    height: 100vh
-  }
+iframe {
+  width: 100vh;
+  height: 100vh;
+}
 </style>
