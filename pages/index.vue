@@ -98,7 +98,11 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
-            <v-btn v-model="textSize" @click="changeTextSize(textSize)"
+            <v-btn
+              v-model="textSize"
+              class="mb-2 mt-n2 grey lighten-5"
+              depressed
+              @click="changeTextSize(textSize)"
               >テキストサイズ：{{ textSize }}</v-btn
             >
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
@@ -174,7 +178,6 @@
                           v-on="on"
                         ></v-img>
                         <v-btn
-                          color="grey lighten-1"
                           icon="mdi-trash-can-outline"
                           right
                           @click="deletePicture(picture)"
