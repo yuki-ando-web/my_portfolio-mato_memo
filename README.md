@@ -1,4 +1,4 @@
-# mato_memo
+# まとめも
 #### 閲覧していただきありがとうございます。
 アプリURL
 https://tag-memo-app.web.app/
