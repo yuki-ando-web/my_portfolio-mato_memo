@@ -62,6 +62,14 @@
       </v-navigation-drawer>
 
       <v-container>
+        <h1
+          class="text-center mt-2 mb-4 grey--text text--darken-1"
+          width="600"
+          height="40"
+          
+        >
+          {{userName}}さんのメモ一覧
+        </h1>
         <!-- メモ一覧 -->
         <v-row>
           <v-sheet
@@ -192,7 +200,6 @@
                     </v-dialog>
                   </div>
                 </v-row>
-                <!-- <iframe class="iframe" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTs_vApg3BPPum66lRDDXzj75N-fzFbKeD0v2aGTMub33VORa373ruiJrBXmAFLgc3B-DQWCOuB_kUl/pubhtml?gid=1030714401&amp;single=true&amp;widget=true&amp;headers=false"></iframe> -->
               </v-container>
             </v-card>
           </v-col>
@@ -428,9 +435,3 @@ export default {
   },
 }
 </script>
-<style>
-iframe {
-  width: 100vh;
-  height: 100vh;
-}
-</style>

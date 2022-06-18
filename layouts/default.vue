@@ -1,9 +1,12 @@
 <template>
   <v-app dark>
     <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
-      
+      <v-app-bar-title>mato_memo</v-app-bar-title>
       <v-spacer></v-spacer>
 
+      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveMypage"
+        >{{userName}}のお気に入りメモ一覧</v-btn
+      >
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全ユーザーのメモ一覧</v-btn
       >
@@ -80,6 +83,9 @@ export default {
     logout() {
       this.$store.dispatch('memo/logout')
       this.$router.go('/')
+    },
+    moveMypage() {
+      this.$router.push('/myPage')
     },
     moveIndex() {
       this.$router.push('/allUserIndex')

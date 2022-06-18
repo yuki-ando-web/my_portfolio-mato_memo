@@ -24,13 +24,14 @@ export const mutations = {
   initMemo(state) {
     state.memos = []
   },
-  addMemo(state , memo){
+  addMemo(state, memo) {
     state.memos.push(memo)
   },
- 
+
   newMemo(state, payload) {
     state.memos.unshift(payload)
   },
+
   // メモ変更のstate処理 (index.vue,user/_id.vueにて発火)
   changeMemo(state, payload) {
     const memo = state.memos.find((e) => e.memoId === payload.id)
@@ -77,6 +78,29 @@ export const mutations = {
     )
     deletePictureMemo.picture.splice(deletePictureIndex, 1)
   },
+  favoriteMemo(state, favInfo) {
+    for (let i = 0; i < state.memos.length; i++) {
+      const ob = state.memos[i]
+      if (ob.memoId === favInfo.favMemo.memoId) {
+        state.memos[i].fav.push(`${favInfo.name}fav`)
+      }
+    }
+  },
+  unfavoriteMemo(state, unfavInfo) {
+    for (let i = 0; i < state.memos.length; i++) {
+      const ob = state.memos[i]
+      if (ob.memoId === unfavInfo.unfavMemo.memoId) {
+        state.memos[i].fav.push(`${unfavInfo.name}fav`)
+      }
+      const memo = state.memos.find(
+        (e) => e.memoId === unfavInfo.unfavMemo.memoId
+      )
+      const memoIndex = memo.tag.findIndex(
+        (e) => e.fav === unfavInfo.unfavMemo.fav
+      )
+      memo.fav.splice(memoIndex, 1)
+    }
+  },
 }
 
 export const actions = {
@@ -99,7 +123,7 @@ export const actions = {
       })
   },
   // メモ新規作成のfirestoreの処理,(index.vueにて発火)
-  newMemo({ commit, state }) {
+  async newMemo({ commit, state }) {
     const memo = {
       title: '',
       content: '',
@@ -109,25 +133,34 @@ export const actions = {
       memoUserId: state.userId,
       tag: [],
       picture: [],
+      fav: [],
     }
-    memoRef.add(memo)
-    commit('newMemo', memo)
+    try {
+      await memoRef.add(memo)
+      commit('newMemo', memo)
+    } catch (e) {
+      console.log(e)
+      alert('メモの投稿に失敗しました。')
+    }
   },
   fetchMemo({ commit }) {
     commit('initMemo')
     return new Promise((resolve, reject) => {
-      memoRef.orderBy('created_at', 'desc').get()
-      .then(res => {
-        res.forEach((doc) => {
-          commit('addMemo', doc.data())
-          console.log(doc.data())
-          resolve(true)
+      memoRef
+        .orderBy('created_at', 'desc')
+        .get()
+        .then((res) => {
+          console.log(res)
+          res.forEach((doc) => {
+            commit('addMemo', doc.data())
+            console.log(doc.data())
+            resolve(true)
+          })
         })
-      })
-      .catch(error => {
-        console.error('An error occurred in fetchMemo(): ', error)
-        reject(error)
-      })
+        .catch((error) => {
+          console.error('An error occurred in fetchMemo(): ', error)
+          reject(error)
+        })
     })
   },
   // メモ編集のfirestoreの処理,テキストエリアの値が更新されるたび発火(index.vue,user/_id.vueにて発火)
@@ -157,6 +190,35 @@ export const actions = {
         })
       })
     commit('deleteMemo', payload)
+  },
+  favoriteMemo({ commit }, favInfo) {
+    memoRef
+      .where('memoId', '==', favInfo.favMemo.memoId)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          memoRef.doc(doc.id).update({
+            fav: firebase.firestore.FieldValue.arrayUnion(`${favInfo.name}Fav`),
+          })
+        })
+      })
+    commit('favoriteMemo', favInfo)
+  },
+  unfavoriteMemo({ commit }, unfavInfo) {
+    console.log(unfavInfo)
+    memoRef
+      .where('memoId', '==', unfavInfo.unfavMemo.memoId)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          memoRef.doc(doc.id).update({
+            fav: firebase.firestore.FieldValue.arrayRemove(
+              `${unfavInfo.name}Fav`
+            ),
+          })
+        })
+      })
+    commit('unfavoriteMemo', unfavInfo)
   },
   // タグ追加のfirestoreの処理,memo内のtag配列に追加(index.vue,user/_id.vueにて発火)
   addTag({ commit }, payload) {
