@@ -106,29 +106,35 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
+            <v-btn
+              v-model="textSize"
+              class="mb-2 mt-n2 grey lighten-5"
+              depressed
+              @click="changeTextSize(textSize)"
+              >テキストサイズ：{{ textSize }}</v-btn
+            >
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
-              <div>
-                <v-text-field
-                  id="title"
-                  :value="memo.title"
-                  autofocus
-                  auto-grow
-                  dense
-                  full-width
-                  placeholder="タイトル"
-                  @input="changeMemo"
-                ></v-text-field>
-                <v-textarea
-                  id="content"
-                  :value="memo.content"
-                  dense
-                  rows="20"
-                  full-width
-                  placeholder="コンテンツ"
-                  @input="changeMemo"
-                ></v-textarea>
-              </div>
-              <v-divider class="my-2"></v-divider>
+              <v-text-field
+                id="title"
+                :value="memo.title"
+                autofocus
+                auto-grow
+                dense
+                full-width
+                placeholder="タイトル"
+                :class="`text-${titleSize}`"
+                @input="changeMemo"
+              ></v-text-field>
+              <v-textarea
+                id="content"
+                :value="memo.content"
+                dense
+                rows="20"
+                full-width
+                placeholder="コンテンツ"
+                :class="`text-${contentSize}`"
+                @input="changeMemo"
+              ></v-textarea>
 
               <v-row no-gutters>
                 <div>
@@ -168,7 +174,7 @@
                     >アップロード</v-btn
                   >
                 </v-row>
-                <v-row no-gutters justify="center">
+                <v-row no-gutters justify="start">
                   <div v-for="(picture, index) in memo.picture" :key="index">
                     <v-dialog :value="memo.dialog">
                       <template v-slot:activator="{ on, attrs }">
@@ -180,7 +186,6 @@
                           v-on="on"
                         ></v-img>
                         <v-btn
-                          color="grey lighten-1"
                           icon="mdi-trash-can-outline"
                           right
                           @click="deletePicture(picture)"
@@ -224,6 +229,9 @@ export default {
       displayTags: '',
       searchTag: '',
       inputPicture: [],
+      textSize: '中',
+      titleSize: '',
+      contentSize: '',
     }
   },
   computed: {
@@ -405,7 +413,25 @@ export default {
       this.searchKeyword = ''
       this.searchTag = ''
     },
+    changeTextSize(textSize) {
+      console.log(this.titleSize)
+
+      if (textSize === '小') {
+        this.textSize = '中'
+        this.titleSize = 'h5'
+        this.contentSize = 'subtitle-1'
+      }
+      if (textSize === '中') {
+        this.textSize = '大'
+        this.titleSize = 'h4'
+        this.contentSize = 'h6'
+      }
+      if (textSize === '大') {
+        this.textSize = '小'
+        this.titleSize = 'h6'
+        this.contentSize = 'caption'
+      }
+    },
   },
 }
 </script>
-
