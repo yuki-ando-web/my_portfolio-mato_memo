@@ -123,7 +123,7 @@ export const actions = {
       })
   },
   // メモ新規作成のfirestoreの処理,(index.vueにて発火)
-  async newMemo({ commit, state }) {
+  newMemo({ commit, state }) {
     const memo = {
       title: '',
       content: '',
@@ -135,13 +135,9 @@ export const actions = {
       picture: [],
       fav: [],
     }
-    try {
-      await memoRef.add(memo)
+   
+      memoRef.add(memo)
       commit('newMemo', memo)
-    } catch (e) {
-      console.log(e)
-      alert('メモの投稿に失敗しました。')
-    }
   },
   fetchMemo({ commit }) {
     commit('initMemo')
@@ -301,7 +297,8 @@ export const actions = {
           })
         commit('deletePicture', payload)
       })
-  },
+    },
+   
 }
 
 export const getters = {

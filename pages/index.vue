@@ -66,9 +66,8 @@
           class="text-center mt-2 mb-4 grey--text text--darken-1"
           width="600"
           height="40"
-          
         >
-          {{userName}}さんのメモ一覧
+          {{ userName }}さんのメモ一覧
         </h1>
         <!-- メモ一覧 -->
         <v-row>
@@ -107,6 +106,7 @@
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
             <v-btn
+              v-show="$vuetify.breakpoint.mdAndUp"
               v-model="textSize"
               class="mb-2 mt-n2 grey lighten-5"
               depressed
@@ -123,7 +123,7 @@
                 full-width
                 placeholder="タイトル"
                 :class="`text-${titleSize}`"
-                @input="changeMemo"
+                @blur="changeMemo"
               ></v-text-field>
               <v-textarea
                 id="content"
@@ -133,7 +133,7 @@
                 full-width
                 placeholder="コンテンツ"
                 :class="`text-${contentSize}`"
-                @input="changeMemo"
+                @blur="changeMemo"
               ></v-textarea>
 
               <v-row no-gutters>
@@ -429,7 +429,7 @@ export default {
       if (textSize === '大') {
         this.textSize = '小'
         this.titleSize = 'h6'
-        this.contentSize = 'caption'
+        this.contentSize = 'subtitle-2'
       }
     },
   },

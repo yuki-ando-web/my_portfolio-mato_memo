@@ -1,11 +1,13 @@
 <template>
   <v-app dark>
     <v-app-bar :clipped-left="clipped" app class="overflow-x-auto">
-      <v-app-bar-title>mato_memo</v-app-bar-title>
+      <v-app-bar-title class="grey--text text--darken-1">
+        <div>mato_memo</div>
+      </v-app-bar-title>
       <v-spacer></v-spacer>
 
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveMypage"
-        >{{userName}}のお気に入りメモ一覧</v-btn
+        >{{ userName }}のお気に入りメモ一覧</v-btn
       >
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全ユーザーのメモ一覧</v-btn
@@ -32,7 +34,6 @@
     </v-app-bar>
     <v-main>
       <v-container>
-
         <Nuxt />
       </v-container>
     </v-main>
@@ -75,7 +76,7 @@ export default {
       },
     },
   },
-  
+
   methods: {
     login() {
       this.$store.dispatch('memo/login')
@@ -96,3 +97,9 @@ export default {
   },
 }
 </script>
+
+<style>
+v-app-bar-title__placeholder {
+  text-overflow: clip;
+}
+</style>
