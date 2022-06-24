@@ -210,7 +210,9 @@
 </template>
 
 <script lang="ts">
-export default {
+ import Vue from 'vue'
+
+export default Vue.extend ({
   data() {
     return {
       memo: {
@@ -432,5 +434,5 @@ export default {
       }
     },
   },
-}
+})
 </script>
