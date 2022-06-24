@@ -4,6 +4,7 @@ const memoRef = db.collection('memos')
 const auth = firebase.auth()
 export const state = () => ({
   memos: [],
+  updateLogs: [],
   userName: 'ゲスト',
   userId: '',
 })
@@ -32,11 +33,22 @@ export const mutations = {
     state.memos.unshift(payload)
   },
 
-  // メモ変更のstate処理 (index.vue,user/_id.vueにて発火)
-  changeMemo(state, payload) {
-    const memo = state.memos.find((e) => e.memoId === payload.id)
-    memo.title = payload.title
-    memo.content = payload.content
+  // メモ変更のstate処理。同時に変更履歴も保存
+  changeMemo(state, updateMemo) {
+    const memo = state.memos.find((e) => e.memoId === updateMemo.memoId)
+    const log = state.updateLogs.find((e) => e.memoId === updateMemo.memoId)
+    memo.title = updateMemo.title
+    memo.content = updateMemo.content
+    console.log(memo)
+    if (log === undefined) {
+      state.updateLogs.push(updateMemo)
+    } else {
+      log.title = updateMemo.title
+      log.content = updateMemo.content
+    }
+  },
+  deleteLogs(state) {
+    state.updateLogs.length = 0
   },
   // メモ削除のstate処理(index.vueにて発火)
   deleteMemo(state, payload) {
@@ -135,9 +147,9 @@ export const actions = {
       picture: [],
       fav: [],
     }
-   
-      memoRef.add(memo)
-      commit('newMemo', memo)
+
+    memoRef.add(memo)
+    commit('newMemo', memo)
   },
   fetchMemo({ commit }) {
     commit('initMemo')
@@ -160,20 +172,24 @@ export const actions = {
     })
   },
   // メモ編集のfirestoreの処理,テキストエリアの値が更新されるたび発火(index.vue,user/_id.vueにて発火)
-  changeMemo({ commit }, updateData) {
-    memoRef
-      .where('memoId', '==', updateData.id)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          const updateMemo = {
-            title: updateData.title,
-            content: updateData.content,
-          }
-          memoRef.doc(doc.id).update(updateMemo)
+
+  async  changeMemos({ commit, state }) {
+    for (let i = 0; i < state.updateLogs.length; i++) {
+      console.log(i)
+      await memoRef
+        .where('memoId', '==', state.updateLogs[i].memoId)
+        .get()
+        .then((snapshot) => {
+          snapshot.forEach((doc) => {
+            const updateMemo = {
+              title: state.updateLogs[i].title,
+              content: state.updateLogs[i].content,
+            }
+            memoRef.doc(doc.id).update(updateMemo)
+          })
         })
-      })
-    commit('changeMemo', updateData)
+    }
+    commit('deleteLogs')
   },
   // メモ削除のfirestoreの処理,(index.vue,にて発火)
   deleteMemo({ commit }, payload) {
@@ -182,6 +198,7 @@ export const actions = {
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc) => {
+          console.log(snapshot)
           memoRef.doc(doc.id).delete()
         })
       })
@@ -297,8 +314,7 @@ export const actions = {
           })
         commit('deletePicture', payload)
       })
-    },
-   
+  },
 }
 
 export const getters = {
