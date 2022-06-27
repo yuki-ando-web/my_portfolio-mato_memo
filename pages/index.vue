@@ -209,7 +209,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 export default {
   data() {
     return {
@@ -290,6 +290,7 @@ export default {
     await this.$store.dispatch('memo/fetchMemo')
     this.memoList = this.stateUserMemos
     this.displayTags = this.stateUserTag
+    console.log(this.memoList)
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
