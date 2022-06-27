@@ -25,8 +25,8 @@
                 placeholder="検索ワードを入力"
                 dense
                 append-outer-icon="mdi-magnify"
-                @click:append-outer="searchWordMemo(searchKeyword)"
-                @keydown.enter="searchWordMemo(searchKeyword)"
+                @click:append-outer="searchWordMemo()"
+                @keydown.enter="searchWordMemo()"
               ></v-text-field>
             </v-list-item-content>
           </v-list-item>
@@ -39,8 +39,8 @@
                 placeholder="タグ入力"
                 dense
                 append-outer-icon="mdi-magnify"
-                @click:append-outer="searchTagMemo(searchTag)"
-                @keydown.enter="searchTagMemo(searchTag)"
+                @click:append-outer="searchTagMemo()"
+                @keydown.enter="searchTagMemo()"
                 @input="filterTag(searchTag)"
               ></v-text-field>
               <!-- タグ一覧、クリックすることでタグを含むメモを表示する機能あり -->
@@ -62,13 +62,6 @@
       </v-navigation-drawer>
 
       <v-container>
-        <h1
-          class="text-center mt-2 mb-4 grey--text text--darken-1"
-          width="600"
-          height="40"
-        >
-          {{ userName }}さんのメモ一覧
-        </h1>
         <!-- メモ一覧 -->
         <v-row>
           <v-sheet
@@ -105,14 +98,6 @@
           </v-sheet>
           <!-- メモ モバイル画面の時は別ページに移るため、非表示になる-->
           <v-col>
-            <v-btn
-              v-show="$vuetify.breakpoint.mdAndUp"
-              v-model="textSize"
-              class="mb-2 mt-n2 grey lighten-5"
-              depressed
-              @click="changeTextSize(textSize)"
-              >テキストサイズ：{{ textSize }}</v-btn
-            >
             <v-card v-show="$vuetify.breakpoint.mdAndUp" height="100%">
               <v-text-field
                 id="title"
@@ -122,7 +107,7 @@
                 dense
                 full-width
                 placeholder="タイトル"
-                :class="`text-${titleSize}`"
+                class="text-h6"
                 @blur="changeMemo"
               ></v-text-field>
               <v-textarea
@@ -132,7 +117,6 @@
                 rows="20"
                 full-width
                 placeholder="コンテンツ"
-                :class="`text-${contentSize}`"
                 @blur="changeMemo"
               ></v-textarea>
 
@@ -204,13 +188,18 @@
             </v-card>
           </v-col>
         </v-row>
+        <v-snackbar v-model="notification" class="text-center">
+          メモを保存しました
+        </v-snackbar>
       </v-container>
     </v-app>
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
   data() {
     return {
       memo: {
@@ -229,9 +218,7 @@ export default {
       displayTags: '',
       searchTag: '',
       inputPicture: [],
-      textSize: '中',
-      titleSize: '',
-      contentSize: '',
+      notification: false,
     }
   },
   computed: {
@@ -287,15 +274,16 @@ export default {
     },
   },
   async created() {
+    await this.$store.dispatch('memo/changeMemos')
     await this.$store.dispatch('memo/fetchMemo')
     this.memoList = this.stateUserMemos
     this.displayTags = this.stateUserTag
-    console.log(this.memoList)
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
       this.newMemo()
     }
+    console.log(this.$store.state.memo.updateLogs)
   },
   // 最初は先頭のメモの情報が表示される
 
@@ -314,7 +302,7 @@ export default {
     // モバイル画面の時に編集ページに移動する
     moveMemo(index) {
       if (this.$vuetify.breakpoint.smAndDown === true) {
-        this.$router.push(`user/${this.memoList[index].memoId}`)
+        this.$router.push(`memo/${this.memoList[index].memoId}`)
       }
     },
     // メモ新規作成機能。検索条件がクリアになり、新規に作ったメモの情報が取得される
@@ -325,12 +313,13 @@ export default {
     },
     // メモ編集機能。入力欄が変わるたびに発火。valueを引数にする。
     changeMemo() {
-      const updateData = {
-        id: this.memo.memoId,
+      const updateMemo = {
+        memoId: this.memo.memoId,
         title: document.getElementById('title').value,
         content: document.getElementById('content').value,
       }
-      this.$store.dispatch('memo/changeMemo', updateData)
+      this.$store.commit('memo/changeMemo', updateMemo)
+      this.notification = true
     },
     //  メモ削除機能。確認モーダルが表示された後発動。検索条件がクリアになり、先頭のメモの情報が取得される
     deleteMemo({ memo, index }) {
@@ -381,6 +370,7 @@ export default {
     },
     // ワード検索機能。ワードを含むメモの配列を表示させる
     searchWordMemo() {
+      console.log(this.searchTag)
       const upSword = this.searchKeyword.toUpperCase()
       this.memoList = this.stateUserMemos.filter(
         (e) =>
@@ -413,25 +403,6 @@ export default {
       this.searchKeyword = ''
       this.searchTag = ''
     },
-    changeTextSize(textSize) {
-      console.log(this.titleSize)
-
-      if (textSize === '小') {
-        this.textSize = '中'
-        this.titleSize = 'h5'
-        this.contentSize = 'subtitle-1'
-      }
-      if (textSize === '中') {
-        this.textSize = '大'
-        this.titleSize = 'h4'
-        this.contentSize = 'h6'
-      }
-      if (textSize === '大') {
-        this.textSize = '小'
-        this.titleSize = 'h6'
-        this.contentSize = 'subtitle-2'
-      }
-    },
   },
-}
+})
 </script>

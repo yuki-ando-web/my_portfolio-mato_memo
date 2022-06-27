@@ -31,12 +31,10 @@
             <div v-for="(tag, index) in memo.tag" :key="index">
               <v-chip
               class="yellow lighten-1"
-                close
                 filter
                 ripple
                 tag
                 small
-                @click:close="deleteTag(tag)"
               >
                 {{ tag }}
               </v-chip>
