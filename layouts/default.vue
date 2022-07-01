@@ -9,9 +9,9 @@
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveMypage"
         >{{ userName }}のお気に入りメモ一覧</v-btn
       >
-      <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
+      <!-- <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveIndex"
         >全ユーザーのメモ一覧</v-btn
-      >
+      > -->
       <v-btn class="grey lighten-2 mr-1" depressed v-on:click="moveUserTop"
         >{{ userName }}のメモ一覧&新規作成</v-btn
       >
