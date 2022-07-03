@@ -136,6 +136,8 @@ export default {
 
   methods: {
     changeMemo() {
+      console.log(document.getElementById('title').value)
+      console.log(this.detailUserMemo)
       const updateMemo = {
         memoId: this.$route.params.id,
         title: document.getElementById('title').value,

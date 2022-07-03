@@ -42,11 +42,9 @@ https://user-images.githubusercontent.com/97369008/174513982-d8d0aa3f-7a8f-4fa3-
 
 4.ログイン機能
 
-5.全ユーザーのメモ閲覧機能
+5.画像挿入機能
 
-6.画像挿入機能
-
-7.メモのお気に入り機能
+6.メモのお気に入り機能
 
 
 <img width="1186" alt="スクリーンショット 2022-06-26 21 48 48" src="https://user-images.githubusercontent.com/97369008/175814986-965bb78f-9193-4fd9-beca-2a4cc853f376.png">
