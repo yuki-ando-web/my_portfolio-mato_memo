@@ -1,10 +1,13 @@
 <template>
   <div class="ml-2">
-    <h1 class="text-center mt-2 mb-4 grey--text text--darken-1" width="600" height="40">
-      
-      {{userName}} さんのお気に入りしたメモ
-      </h1>
-  
+    <h1
+      class="text-center mt-2 mb-4 grey--text text--darken-1"
+      width="600"
+      height="40"
+    >
+      {{ userName }} さんのお気に入りしたメモ
+    </h1>
+
     <v-row>
       <v-col
         v-for="(memo, index) in displayMemos"
@@ -15,48 +18,43 @@
         lg="6"
         xl="6"
       >
-        <v-card height="360" class="overflow-y-auto yellow lighten-3">
-          <v-card-text class="text-body-1">{{ memo.memoUserName }}</v-card-text>
-          <div class="text">
-          <v-card-title class="mt-n8 text-h5">
-            {{ memo.title }}
-          </v-card-title>
-          <v-card-text class="text-body-1">
-            {{ memo.content }}
-          </v-card-text>
-          </div>
-          <v-card-actions class="overflow-x-auto">
-            <v-row no-gutters>
-
-            <div v-for="(tag, index) in memo.tag" :key="index">
-              <v-chip
-              class="yellow lighten-1"
-                close
-                filter
-                ripple
-                tag
-                small
-                @click:close="deleteTag(tag)"
-              >
-                {{ tag }}
-              </v-chip>
+        <v-btn
+          depressed
+          tile
+          class="yellow lighten-3"
+          @click="moveMemo(memo)"
+          >編集</v-btn
+        >
+        <v-sheet>
+          <v-card height="360" class="overflow-y-auto yellow lighten-3">
+            <!-- <v-card-text class="text-body-1">{{ memo.memoUserName }}</v-card-text> -->
+            <div class="text">
+              <v-card-title class="mt-n8 text-h5">
+                {{ memo.title }}
+              </v-card-title>
+              <v-card-text class="text-body-1">
+                {{ memo.content }}
+              </v-card-text>
             </div>
-            </v-row>
-          </v-card-actions>
-          <v-card-actions>
-            <v-row justify="center">
-
-            <div v-for="(picture, index) in memo.picture" :key="index"
-            >
-              <v-img
-                :src="picture.url"
-                width="50vh"
-              ></v-img>
-            </div>
-            </v-row>
-          </v-card-actions>
+            <v-card-actions class="overflow-x-auto">
+              <v-row no-gutters>
+                <div v-for="(tag, index) in memo.tag" :key="index">
+                  <v-chip class="yellow lighten-1" filter ripple tag small>
+                    {{ tag }}
+                  </v-chip>
+                </div>
+              </v-row>
+            </v-card-actions>
+            <v-card-actions>
+              <v-row justify="center">
+                <div v-for="(picture, index) in memo.picture" :key="index">
+                  <v-img :src="picture.url" width="50vh"></v-img>
+                </div>
+              </v-row>
+            </v-card-actions>
             <v-spacer></v-spacer>
-        </v-card>
+          </v-card>
+        </v-sheet>
       </v-col>
     </v-row>
   </div>
@@ -85,8 +83,8 @@ export default {
     stateMemos: {
       get() {
         return this.$store.getters['memo/getStateAllMemos'].filter((e) =>
-        e.fav.includes(`${this.userName}fav`)
-      )
+          e.fav.includes(`${this.userName}fav`)
+        )
       },
     },
     stateTag: {
@@ -99,7 +97,6 @@ export default {
         return this.$store.getters['memo/getUserName']
       },
     },
-    
   },
   mounted() {
     this.displayMemos = this.stateMemos
@@ -139,6 +136,11 @@ export default {
     openDialog(memo) {
       this.dialog = true
       this.dialogMemo = memo
+    },
+    moveMemo(memo) {
+       
+        this.$router.push(`memo/${memo.memoId}`)
+      
     },
   },
 }

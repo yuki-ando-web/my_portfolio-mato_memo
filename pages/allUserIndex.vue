@@ -63,13 +63,6 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <h1
-        class="text-center mt-2 mb-4 grey--text text--darken-1"
-        width="600"
-        height="40"
-      >
-        全てのユーザーのメモ
-      </h1>
       <v-row>
         <v-dialog v-model="dialog" width="500">
           <v-card>
@@ -121,7 +114,7 @@
             <v-card-actions>
               <v-card-text>{{ memo.memoUserName }}</v-card-text>
               <v-btn
-                v-if="!memo.fav.includes(`${userName}fav`)"
+                v-if="!memo.fav.includes(`${userName}Fav`)"
                 icon
                 @click="favoriteMemo(memo)"
               >

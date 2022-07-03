@@ -10,6 +10,7 @@
             dense
             full-width
             placeholder="タイトル"
+            class="text-h6"
             :value="detailUserMemo.title"
             @input="changeMemo"
           ></v-text-field>
@@ -59,33 +60,36 @@
               placeholder="画像を添付"
               @change="uploadFile"
             ></v-file-input>
-           <v-row no-gutters justify="center">
-                  <div v-for="(picture, index) in detailUserMemo.picture" :key="index">
-                    <v-dialog :value="detailUserMemo.dialog">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-img
-                          :src="picture.url"
-                          height="12vh"
-                          width="20vh"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-img>
-                        <v-btn
-                          color="grey lighten-1"
-                          icon="mdi-trash-can-outline"
-                          right
-                          @click="deletePicture(picture)"
-                        >
-                          <v-icon>mdi-trash-can-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-card>
-                        <v-img :src="picture.url"></v-img>
-                        <div>{{ picture.name }}</div>
-                      </v-card>
-                    </v-dialog>
-                  </div>
-                </v-row>
+            <v-row no-gutters justify="center">
+              <div
+                v-for="(picture, index) in detailUserMemo.picture"
+                :key="index"
+              >
+                <v-dialog :value="detailUserMemo.dialog">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-img
+                      :src="picture.url"
+                      height="12vh"
+                      width="20vh"
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-img>
+                    <v-btn
+                      color="grey lighten-1"
+                      icon="mdi-trash-can-outline"
+                      right
+                      @click="deletePicture(picture)"
+                    >
+                      <v-icon>mdi-trash-can-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-img :src="picture.url"></v-img>
+                    <div>{{ picture.name }}</div>
+                  </v-card>
+                </v-dialog>
+              </div>
+            </v-row>
           </v-row>
         </v-container>
       </v-card>
@@ -106,6 +110,8 @@ export default {
       displayUserMemos: '',
       displayTags: '',
       dialog: false,
+            notification: false,
+
     }
   },
   computed: {
@@ -130,14 +136,14 @@ export default {
 
   methods: {
     changeMemo() {
-      console.log(document.getElementById('title').value)
-      console.log(this.detailUserMemo)
-      const updateData = {
-        id: this.$route.params.id,
+      const updateMemo = {
+        memoId: this.$route.params.id,
         title: document.getElementById('title').value,
         content: document.getElementById('content').value,
       }
-      this.$store.dispatch('memo/changeMemo', updateData)
+      this.$store.commit('memo/changeMemo', updateMemo)
+            this.notification = true
+
     },
     deleteMemo() {
       this.$store.dispatch('memo/deleteMemo', this.memo)
@@ -165,7 +171,7 @@ export default {
       if (this.inputPicture.length !== 0) {
         this.$store.dispatch('memo/uploadPicture', {
           picture: this.inputPicture,
-          memoId:  this.detailUserMemo.memoId,
+          memoId: this.detailUserMemo.memoId,
         })
         this.inputPicture = []
       }
