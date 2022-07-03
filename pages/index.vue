@@ -69,7 +69,7 @@
             max-height="100vh"
             :width="bkPoint.cardsWidth"
           >
-            <div v-for="(memo, index) in memoList" :key="index">
+            <div v-for="(memo ,index) in memoList" :key="index">
               <v-card
                 height="25vh"
                 @click="
@@ -77,14 +77,26 @@
                   moveMemo(index)
                 "
               >
-                <v-btn
-                  x-small
-                  fab
-                  depressed
-                  class="mr-auto"
-                  @click.stop="deleteMemo({ memo, index })"
-                  >X</v-btn
-                >
+                <v-card-actions>
+                  <v-btn
+                    x-small
+                    fab
+                    depressed
+                    class="mr-auto"
+                    @click.stop="deleteMemo({ memo, index })"
+                    >X</v-btn
+                  >
+                  <v-btn
+                    v-show="!memo.fav.includes(`${userName}fav`)"
+                    icon
+                    @click.stop="favoriteMemo(memo)"
+                  >
+                    <v-icon>mdi-star</v-icon>
+                  </v-btn>
+                  <v-btn v-show="memo.fav.includes(`${userName}fav`)" icon @click.stop="unfavoriteMemo(memo)">
+                    <v-icon color="yellow lighten-3">mdi-star</v-icon>
+                  </v-btn>
+                </v-card-actions>
                 <v-card-subtitle class="text-caption mt-n4 ml-n3 p-0">
                   {{ memo.title.substr(0, 11) }}
                 </v-card-subtitle>
@@ -108,7 +120,7 @@
                 full-width
                 placeholder="タイトル"
                 class="text-h6"
-                @blur="changeMemo"
+                @input="changeMemo"
               ></v-text-field>
               <v-textarea
                 id="content"
@@ -117,7 +129,7 @@
                 rows="20"
                 full-width
                 placeholder="コンテンツ"
-                @blur="changeMemo"
+                @input="changeMemo"
               ></v-textarea>
 
               <v-row no-gutters>
@@ -196,7 +208,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -275,9 +287,11 @@ export default Vue.extend({
   },
   async created() {
     await this.$store.dispatch('memo/changeMemos')
+    await this.$store.dispatch('memo/removeMemos')
     await this.$store.dispatch('memo/fetchMemo')
     this.memoList = this.stateUserMemos
     this.displayTags = this.stateUserTag
+    console.log(this.memoList)
     if (this.stateUserMemos.length > 0) {
       this.memo = this.stateUserMemos[0]
     } else {
@@ -403,6 +417,15 @@ export default Vue.extend({
       this.searchKeyword = ''
       this.searchTag = ''
     },
-  },
+   favoriteMemo(memo) {
+     console.log("i")
+      const favInfo = { favMemo: memo, name: this.userName }
+      this.$store.dispatch('memo/favoriteMemo', favInfo)
+    },
+    unfavoriteMemo(memo) {
+      const unfavInfo = { unfavMemo: memo, name: this.userName }
+      this.$store.dispatch('memo/unfavoriteMemo', unfavInfo)
+    },
+      },
 })
 </script>

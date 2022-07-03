@@ -31,6 +31,7 @@ export const mutations = {
 
   newMemo(state, payload) {
     state.memos.unshift(payload)
+    console.log(payload)
   },
 
   // メモ変更のstate処理。同時に変更履歴も保存
@@ -39,7 +40,6 @@ export const mutations = {
     const log = state.updateLogs.find((e) => e.memoId === updateMemo.memoId)
     memo.title = updateMemo.title
     memo.content = updateMemo.content
-    console.log(memo)
     if (log === undefined) {
       state.updateLogs.push(updateMemo)
     } else {
@@ -116,7 +116,6 @@ export const mutations = {
 }
 
 export const actions = {
-  //  firebase authenticationでログイン処理。ログイン後ユーザー情報更新のsetUser関数が実行される
   login({ commit }) {
     auth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -125,7 +124,6 @@ export const actions = {
         commit('setUser', user)
       })
   },
-  //  firebase authenticationでログアウト処理。ログイン後ユーザー情報更新のsetUser関数が実行される
   logout({ commit }) {
     firebase
       .auth()
@@ -147,7 +145,6 @@ export const actions = {
       picture: [],
       fav: [],
     }
-
     memoRef.add(memo)
     commit('newMemo', memo)
   },
@@ -173,7 +170,7 @@ export const actions = {
   },
   // メモ編集のfirestoreの処理,テキストエリアの値が更新されるたび発火(index.vue,user/_id.vueにて発火)
 
-  async  changeMemos({ commit, state }) {
+  async changeMemos({ commit, state }) {
     for (let i = 0; i < state.updateLogs.length; i++) {
       console.log(i)
       await memoRef
@@ -188,21 +185,30 @@ export const actions = {
             memoRef.doc(doc.id).update(updateMemo)
           })
         })
+        .catch((error) => {
+          console.error('メモの更新に失敗しました', error)
+        })
     }
     commit('deleteLogs')
   },
   // メモ削除のfirestoreの処理,(index.vue,にて発火)
   deleteMemo({ commit }, payload) {
-    memoRef
-      .where('memoId', '==', payload.memoId)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          console.log(snapshot)
-          memoRef.doc(doc.id).delete()
+    return new Promise((resolve, reject) => {
+      commit('deleteMemo', payload)
+      memoRef
+        .where('memoId', '==', payload.memoId)
+        .get()
+        .then((res) => {
+          res.forEach((doc) => {
+            memoRef.doc(doc.id).delete()
+          })
+          resolve(true)
+        })
+        .catch((error) => {
+          console.error('メモの削除に失敗しました', error)
+          reject(error)
         })
       })
-    commit('deleteMemo', payload)
   },
   favoriteMemo({ commit }, favInfo) {
     memoRef
@@ -211,7 +217,7 @@ export const actions = {
       .then((snapshot) => {
         snapshot.forEach((doc) => {
           memoRef.doc(doc.id).update({
-            fav: firebase.firestore.FieldValue.arrayUnion(`${favInfo.name}Fav`),
+            fav: firebase.firestore.FieldValue.arrayUnion(`${favInfo.name}fav`),
           })
         })
       })
@@ -226,7 +232,7 @@ export const actions = {
         snapshot.forEach((doc) => {
           memoRef.doc(doc.id).update({
             fav: firebase.firestore.FieldValue.arrayRemove(
-              `${unfavInfo.name}Fav`
+              `${unfavInfo.name}fav`
             ),
           })
         })
@@ -315,6 +321,17 @@ export const actions = {
         commit('deletePicture', payload)
       })
   },
+  removeMemos() {
+    memoRef
+    .where('content', '==', '')
+    .where('title', '==', '')
+      .get()
+      .then((res) => {
+        res.forEach((doc) => {
+          memoRef.doc(doc.id).delete()
+        })
+      })
+  }
 }
 
 export const getters = {

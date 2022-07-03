@@ -114,7 +114,7 @@
             <v-card-actions>
               <v-card-text>{{ memo.memoUserName }}</v-card-text>
               <v-btn
-                v-if="!memo.fav.includes(`${userName}fav`)"
+                v-if="!memo.fav.includes(`${userName}Fav`)"
                 icon
                 @click="favoriteMemo(memo)"
               >
